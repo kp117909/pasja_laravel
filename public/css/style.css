@@ -1,0 +1,97 @@
+
+html, body{
+    font-family: Arial;
+    font-size: 14px;
+}
+
+.container {
+    padding:10px;
+}
+
+.wrapper {
+    width: 90%;
+    height:650px;
+    margin: 0 auto;
+}
+
+nav {
+  display: block!important;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding: 58px 0 0; /* Height of navbar */
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 5%), 0 2px 10px 0 rgb(0 0 0 / 5%);
+    width: 240px;
+    z-index: 600;
+  }
+  
+  @media (max-width: 991.98px) {
+    .sidebar {
+      width: 100%;
+    }
+  }
+  .sidebar .active {
+    border-radius: 5px;
+    box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
+  }
+  
+  .sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh - 48px);
+    padding-top: 0.5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+  }
+
+  .as-console-wrapper { max-height: 4em !important; }
+
+
+input[type="datetime-local"] {
+  width: 75%;
+  /* More styles here */
+}
+
+.datetimepicker {
+	display: inline-flex;
+	align-items: center;
+	background-color: #fff;
+	border: 1px solid grey;
+	border-radius: 4px;
+}
+
+.datetimepicker  span {
+		height: 1rem;
+		margin-right: .25rem;
+		margin-left: .25rem;
+		border-right: 1px solid #ddd;
+}
+
+.datetimepicker input {
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  outline: none;
+  border: 0;
+  background-color: transparent;
+}
+
+.datetimepicker input[type=date] {
+  width: 10rem;
+  border-right-width: 0;
+}
+
+.datetimepicker input[type=time] {
+  width: 5.5rem;
+  border-left-width: 0;
+}
+
+.info {
+	padding-top: .5rem;
+	font-size: .8rem;
+	color: rgba(255, 255, 255, .5);
+}
