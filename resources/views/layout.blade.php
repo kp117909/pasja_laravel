@@ -14,7 +14,7 @@
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.css' rel='stylesheet'>
       <link href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.1/css/all.css' rel='stylesheet'>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+      <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <!-- FullCalendary JS Librarry -->
 
     <link href="{{url('fullcalendar/packages/core/main.css')}}" rel='stylesheet' /> 
@@ -27,14 +27,12 @@
     <script src="{{url('fullcalendar/packages/timegrid/main.js')}}"></script>
     <script src="{{url('fullcalendar/packages/list/main.js')}}"></script>
     <script src="{{url('fullcalendar/packages/core/locales-all.min.js')}}"></script>
-    <script src="{{url('fullcalendar/packages/moment/main.min.js')}}"></script>
-
 </head>
 <body>
   <header>
-    <nav id="sidebarMenu" style = " z-index: 1;" class="collapse d-lg-block sidebar collapse bg-white">
+    <nav id="sidebarMenu"  class="collapse d-lg-block sidebar collapse bg-white">
       <div class="position-sticky">
-        <div class="list-group list-group-flush mx-3 mt-4">
+        <div  class="list-group list-group-flush mx-3 mt-4">
           <a
             href="{{ route('home.index') }}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
 
@@ -46,6 +44,7 @@
             </i>
             <span>Kalendarz</span>
           </a>
+          
 
         </div>
       </div>
@@ -53,7 +52,7 @@
     <!-- Sidebar -->
   
     <!-- Navbar -->
-    <nav id="main-navbar" style = " z-index: 2;" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
       <div class="container-fluid">
         <button
           class="navbar-toggler"

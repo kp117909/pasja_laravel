@@ -21,7 +21,9 @@ Route::get('calendar.store', [CalendarController::class, 'store'])->name('calend
 
 Route::get('calendar.delete', [CalendarController::class, 'destroy'])->name('calendar.delete');
 
-Route::get('calendar.update', [CalendarController::class, 'edit'])->name('calendar.update');
+Route::get('calendar.update', [CalendarController::class, 'update'])->name('calendar.update');
+
+Route::get('calendar.edit', [CalendarController::class, 'edit'])->name('calendar.edit');
 
 
 

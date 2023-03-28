@@ -32,18 +32,20 @@ class CalendarController extends Controller
                 'overal_price' => $booking -> overal_price,
                 'start' => $booking->start,
                 'end' => $booking-> end,
-                'events' =>$services
+                'events' =>$services,
             ];
         }
 
-        // return response()->json($events);
+        // return response()->json($services);
 
         return view('calendar/index',
          [
          'events' => $events,
+         'events_all' =>Events::all(),
          'clients' => Clients::all(),
          'workers' => Workers::all(),
          'services' => Services::all(),
+         'services_events' => ServicesEvents::all(),
         ]);
     
     }
@@ -134,9 +136,20 @@ class CalendarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        $record_worker = Workers::findOrFail($request->w_id);
+
+        $event = Events::where('id', $request->event_id)->update(
+            [
+                'name_w' => $record_worker->first_name,
+                'surname_w' =>$record_worker->last_name,
+                'start' =>$request->start,
+                'end'=>$request->end
+            ]
+            );
+
+        return response()->json($event);
     }
 
     /**
@@ -146,8 +159,16 @@ class CalendarController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request)
+    {   
+        $event = Events::where('id', $request->event_id)->update(
+            [
+                'start' =>$request->start,
+                'end'=>$request->end
+            ]
+            );
+
+        return response()->json($event);
         //
     }
 

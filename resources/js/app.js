@@ -9,7 +9,7 @@ var myList = [];
 function start(e){
     input_value_price = 0
     console.log(e)
-
+    console.log(document.getElementById(e).className)
     var label = $('#'+e);
     price = parseFloat(label.attr('value'));
     value_name = label.attr('value_name');

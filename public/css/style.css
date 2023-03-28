@@ -95,3 +95,9 @@ input[type="datetime-local"] {
 	font-size: .8rem;
 	color: rgba(255, 255, 255, .5);
 }
+
+.fc-time-grid-event .fc-title {
+  white-space: normal;
+  overflow: hidden;
+  font-weight: bold!important;
+}
