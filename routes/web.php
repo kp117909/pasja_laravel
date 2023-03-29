@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,18 @@ use App\Http\Controllers\CalendarController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/', [HomeController::class, 'index'])->name('home.index');
+Route::get('login', [AuthController::class, 'index'])->name('login');
+
+Route::get('index', [HomeController::class, 'index'])->name('home.index');
+
+Route::post('post-login', [AuthController::class, 'postLogin'])->name('login.post'); 
+
+Route::get('registration', [AuthController::class, 'registration'])->name('registration');
+
+Route::post('post-registration', [AuthController::class, 'postRegistration'])->name('register.post'); 
+
+Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
 Route::get('calendar/index', [CalendarController::class, 'index'])->name('calendar.index');
 
 Route::get('calendar.store', [CalendarController::class, 'store'])->name('calendar.store');

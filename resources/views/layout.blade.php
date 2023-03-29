@@ -149,4 +149,4 @@
    <script src = "{{url('js/javascript.js')}}"></script>
 
 </body>
-
+</html>

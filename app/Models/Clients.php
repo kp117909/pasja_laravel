@@ -9,9 +9,15 @@ class Clients extends Model
 {
     protected $fillable = [
         'id',
+        'login',
+        'password',
         'first_name',
         'last_name',
         'phone',
+    ];
+
+    protected $hidden = [
+        'password',
     ];
     use HasFactory;
 }
