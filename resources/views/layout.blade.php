@@ -12,7 +12,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap -->
     <link href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.css' rel='stylesheet'>
-      <link href='https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.1/css/all.css' rel='stylesheet'>
+    <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
 
       <script src="https://momentjs.com/downloads/moment.min.js"></script>
     <!-- FullCalendary JS Librarry -->
@@ -43,6 +43,12 @@
             <i class="fas fa-calendar fa-fw me-3"> 
             </i>
             <span>Kalendarz</span>
+          </a>
+
+          <a href="{{ route('logout') }}" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-3"></i>
+            </i>
+            <span>Wyloguj</span>
           </a>
           
 

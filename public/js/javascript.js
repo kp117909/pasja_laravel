@@ -2,7 +2,9 @@
 var price = 0;
 var myList = [];
 
-
+document.querySelectorAll('.form-outline').forEach((formOutline) => {
+    new mdb.Input(formOutline).init();
+  });
 
 function start(e){
     input_value_price = 0

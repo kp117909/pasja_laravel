@@ -42,13 +42,12 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
    
-        $credentials = $request->only('email', 'password');
+        $credentials = $request->only('login', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect()->intended('index')
-                        ->withSuccess('You have Successfully loggedin');
+            return redirect()->intended('index')->withSuccess("Zalogowano");
         }
-  
-        return redirect("login")->withSuccess('Oppes! You have entered invalid credentials');
+
+        return redirect('login')->withError('Nieprawidłowe dane!');
     }
       
     /**
@@ -59,13 +58,19 @@ class AuthController extends Controller
     public function postRegistration(Request $request)
     {  
         $request->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            're_password' => 'required|same:password',
+            'phone' => 'required',
             'login' => 'required|unique:clients',
             'password' => 'required|min:6',
         ]);
            
         $data = $request->all();
         $check = $this->create($data);
-         
+        
+        // return response()->json($data);
+
         return redirect("index")->withSuccess('Great! You have Successfully loggedin');
     }
     
@@ -92,6 +97,9 @@ class AuthController extends Controller
     {
       return Clients::create([
         'login' => $data['login'],
+        'first_name' => $data['first_name'],
+        'last_name' => $data['last_name'],
+        'phone' => $data['phone'],
         'password' => Hash::make($data['password'])
       ]);
     }

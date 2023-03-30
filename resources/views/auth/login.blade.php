@@ -6,7 +6,15 @@
     <!-- custom alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap -->
-    <link href='https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.css' rel='stylesheet'>
+    <link
+  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
+  rel="stylesheet"
+/>
+
+<script
+  type="text/javascript"
+  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
+></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -33,18 +41,18 @@
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Zaloguj się do twojego konta</h5>
 
                   <div class="form-outline mb-4">
-                    <input type="login" id="login" name = "login" class="form-control form-control-lg" />
+                    <input type="login" id="login" name = "login" value = "{{ old('login') }}" class="form-control form-control-lg" />
                     <label class="form-label" for="login">Login</label>
                     @if ($errors->has('login'))
-                        <span class="text-danger">{{ $errors->first('login') }}</span>
+                        <span class="text-danger">jest wymagany</span>
                     @endif
                   </div>
 
                   <div class="form-outline mb-4">
-                    <input type="password" id="password" name = "password" class="form-control form-control-lg" />
+                    <input type="password" id="password" name = "password"  class="form-control form-control-lg" />
                     <label class="form-label" for="password">Hasło</label>
                     @if ($errors->has('password'))
-                        <span class="text-danger">{{ $errors->first('password') }}</span>
+                        <span class="text-danger">jest wymagane</span>
                     @endif
                   </div>
 
@@ -52,6 +60,19 @@
                     <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                   </div>
 
+                  @if(session('error'))
+                      <div class="alert alert-danger display-hide">
+                        <button class="close" data-close="alert"></button>
+                        <span>{{ session('error') }}</span>
+                      </div>
+                  @endif
+
+                  @if(session('success'))
+                      <div class="alert alert-success display-hide">
+                        <button class="close" data-close="alert"></button>
+                        <span>{{ session('error') }}</span>
+                      </div>
+                  @endif
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->
                   <p class="mb-5 pb-lg-2" style="color: #393f81;">Nie posiadasz konta? <a href="{{ route('registration') }}"
                       style="color: #393f81;">Zajerestruj się tutaj!</a></p>
