@@ -2,23 +2,15 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <!-- custom alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap -->
-    <link
-  href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
-  rel="stylesheet"
-/>
-
-<script
-  type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
-></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<section class="vh-50" style="background-image: url('png/tlo_pasja.jpeg') ;">
+<section class="vh-100" style="background-image: url('png/tlo_pasja.jpeg') ;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-xl-10">
@@ -35,74 +27,71 @@
                 @csrf
                   <div class="d-flex align-items-center mb-3 pb-1">
                   <i class="fa-brands fa-staylinked fa-flip fa-xl" style="color: #898c90;"></i>
-                    <span class="h1 fw-bold mb-0">HairLink</span>
+                    <span style="padding-left:0.5rem" class="h1 fw-bold mb-0">HairLink</span>
                   </div>
 
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Zajerestruj swoje konto</h5>
 
                   <div class="row">
                     <div class="col-md-4 mb-2 pb-2">
+                        @if ($errors->has('first_name'))
+                          <span class="text-danger">Podaj imię</span>
+                        @endif
                       <div class="form-outline">
                         <input type="text" id="first_name" name = "first_name"  class="form-control form-control-lg" />
                         <label class="form-label" for="first_name">Imię</label>
-                        @if ($errors->has('first_name'))
-                          <span class="text-danger">wymagane</span>
-                        @endif
                       </div>
 
                     </div>
                     <div class="col-md-4 mb-2 pb-2">
-
+                        @if ($errors->has('last_name'))
+                          <span class="text-danger">Podaj nazwisko</span>
+                        @endif
                       <div class="form-outline">
                         <input type="text" id="last_name" name = "last_name" class="form-control form-control-lg" />
-                        <label class="form-label" for="last_name">Nazwisko</label>
-                        @if ($errors->has('last_name'))
-                          <span class="text-danger">wymagane</span>
-                        @endif
+                        <label class="form-label" for="last_name">Nazwisko</label>                       
                       </div>
 
                     </div>
 
                     <div class="col-md-4 mb-2 pb-2">
-
+                        @if ($errors->has('phone'))
+                            <span class="text-danger">Podaj Nr telefonu</span>
+                        @endif
                         <div class="form-outline">
                           <input type="phone" id="phone" name = "phone" class="form-control form-control-lg" />
-                        <label class="form-label" for="phone">Telefon</label>
-                        @if ($errors->has('phone'))
-                            <span class="text-danger">wymagany</span>
-                        @endif
+                        <label class="form-label" for="phone">Nr telefonu</label>
                       </div>
                     </div>
 
                   </div>
-
+                  @if ($errors->has('login'))
+                        <span class="text-danger">Podaj login</span>
+                    @endif
                   <div class="form-outline mb-2">
                     <input type="login" id="login" name = "login" class="form-control form-control-lg" />
                     <label class="form-label" for="login">Login</label>
-                    @if ($errors->has('login'))
-                        <span class="text-danger">wymagany</span>
-                    @endif
                   </div>
+
                   <div class="row">
                     <div class="col-md-6 mb-4 pb-2">
-
+                      @if ($errors->has('password'))
+                        <span class="text-danger">Podaj hasło</span>
+                      @endif
                       <div class="form-outline">
                         <input type="password" id="password" name = "password" class="form-control form-control-lg" />
                         <label class="form-label" for="password">Hasło</label>
-                          @if ($errors->has('password'))
-                            <span class="text-danger">wymagane</span>
-                          @endif
                       </div>
 
                     </div>
                     <div class="col-md-6 mb-4 pb-2">
-
+                      @if ($errors->has('re_password'))
+                        <span class="text-danger">Powtórz hasło</span>
+                      @endif
                       <div class="form-outline">
                         <input type="password" id="re_password" name = "re_password" class="form-control form-control-lg" />
                         <label class="form-label" for="re_password">Powtórz hasło</label>
-                          @if ($errors->has('re_password'))
-                            <span class="text-danger">wymagane</span>
-                          @endif
+                         
                       </div>
 
                     </div>
@@ -123,8 +112,8 @@
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->
                   <p class="mb-2 pb-lg-2" style="color: #393f81;"> Posiadasz konto? <a href="{{route('login')}}"
                       style="color: #393f81;">Zaloguj się tutaj!</a></p>
-                  <a href="#!" class="small text-muted">Terms of use.</a>
-                  <a href="#!" class="small text-muted">Privacy policy</a>
+                  <a href="#!" class="small text-muted">Warunki koszytania.</a>
+                  <a href="#!" class="small text-muted">Polityka prywatności</a>
                 </form>
 
               </div>
@@ -135,8 +124,6 @@
     </div>
   </div>
 </section>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-
+<script src = "{{url('js/javascript.js')}}"></script>
 </body>
 </html>

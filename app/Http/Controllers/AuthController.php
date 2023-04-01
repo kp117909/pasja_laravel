@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Session;
 use App\Models\Clients;
 use Hash;
-  
+
 class AuthController extends Controller
 {
     /**
@@ -18,8 +18,8 @@ class AuthController extends Controller
     public function index()
     {
         return view('auth.login');
-    }  
-      
+    }
+
     /**
      * Write code on Method
      *
@@ -29,7 +29,7 @@ class AuthController extends Controller
     {
         return view('auth.registration');
     }
-      
+
     /**
      * Write code on Method
      *
@@ -41,7 +41,7 @@ class AuthController extends Controller
             'login' => 'required',
             'password' => 'required',
         ]);
-   
+
         $credentials = $request->only('login', 'password');
         if (Auth::attempt($credentials)) {
             return redirect()->intended('index')->withSuccess("Zalogowano");
@@ -49,14 +49,14 @@ class AuthController extends Controller
 
         return redirect('login')->withError('Nieprawidłowe dane!');
     }
-      
+
     /**
      * Write code on Method
      *
      * @return response()
      */
     public function postRegistration(Request $request)
-    {  
+    {
         $request->validate([
             'first_name' => 'required',
             'last_name' => 'required',
@@ -65,15 +65,15 @@ class AuthController extends Controller
             'login' => 'required|unique:clients',
             'password' => 'required|min:6',
         ]);
-           
+
         $data = $request->all();
         $check = $this->create($data);
-        
+
         // return response()->json($data);
 
         return redirect("index")->withSuccess('Great! You have Successfully loggedin');
     }
-    
+
     /**
      * Write code on Method
      *
@@ -81,13 +81,13 @@ class AuthController extends Controller
      */
     public function dashboard()
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             return view('index');
         }
-  
+
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
-    
+
     /**
      * Write code on Method
      *
@@ -95,24 +95,25 @@ class AuthController extends Controller
      */
     public function create(array $data)
     {
-      return Clients::create([
-        'login' => $data['login'],
-        'first_name' => $data['first_name'],
-        'last_name' => $data['last_name'],
-        'phone' => $data['phone'],
-        'password' => Hash::make($data['password'])
-      ]);
+        return Clients::create([
+            'login' => $data['login'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'phone' => $data['phone'],
+            'password' => Hash::make($data['password'])
+        ]);
     }
-    
+
     /**
      * Write code on Method
      *
      * @return response()
      */
-    public function logout() {
+    public function logout()
+    {
         Session::flush();
         Auth::logout();
-  
+
         return Redirect('login');
     }
 }

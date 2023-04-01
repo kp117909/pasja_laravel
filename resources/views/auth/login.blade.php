@@ -2,7 +2,6 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <!-- custom alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap -->
@@ -11,10 +10,7 @@
   rel="stylesheet"
 />
 
-<script
-  type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"
-></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -35,49 +31,42 @@
                 @csrf
                   <div class="d-flex align-items-center mb-3 pb-1">
                   <i class="fa-brands fa-staylinked fa-flip fa-xl" style="color: #898c90;"></i>
-                    <span class="h1 fw-bold mb-0">HairLink</span>
+                    <span style="padding-left:0.5rem" class="h1 fw-bold mb-0">HairLink</span>
                   </div>
 
                   <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Zaloguj się do twojego konta</h5>
+                  @if ($errors->has('login'))
+                    <span class="text-danger">Podaj login</span>
+                  @endif
 
                   <div class="form-outline mb-4">
                     <input type="login" id="login" name = "login" value = "{{ old('login') }}" class="form-control form-control-lg" />
                     <label class="form-label" for="login">Login</label>
-                    @if ($errors->has('login'))
-                        <span class="text-danger">jest wymagany</span>
-                    @endif
                   </div>
+
+                  @if ($errors->has('password'))
+                    <span class="text-danger">Podaj hasło</span>
+                  @endif
 
                   <div class="form-outline mb-4">
                     <input type="password" id="password" name = "password"  class="form-control form-control-lg" />
                     <label class="form-label" for="password">Hasło</label>
-                    @if ($errors->has('password'))
-                        <span class="text-danger">jest wymagane</span>
-                    @endif
                   </div>
+
 
                   <div class="pt-1 mb-4">
                     <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                   </div>
 
                   @if(session('error'))
-                      <div class="alert alert-danger display-hide">
-                        <button class="close" data-close="alert"></button>
-                        <span>{{ session('error') }}</span>
-                      </div>
+                  <span class="text-danger"> {{ session('error') }}</span>
                   @endif
 
-                  @if(session('success'))
-                      <div class="alert alert-success display-hide">
-                        <button class="close" data-close="alert"></button>
-                        <span>{{ session('error') }}</span>
-                      </div>
-                  @endif
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->
-                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Nie posiadasz konta? <a href="{{ route('registration') }}"
+                  <p class="mb-3 pb-lg-2" style="color: #393f81;">Nie posiadasz konta? <a href="{{ route('registration') }}"
                       style="color: #393f81;">Zajerestruj się tutaj!</a></p>
-                  <a href="#!" class="small text-muted">Terms of use.</a>
-                  <a href="#!" class="small text-muted">Privacy policy</a>
+                      <a href="#!" class="small text-muted">Warunki koszytania.</a>
+                  <a href="#!" class="small text-muted">Polityka prywatności</a>
                 </form>
 
               </div>
@@ -88,8 +77,7 @@
     </div>
   </div>
 </section>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-<script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src = "{{url('js/javascript.js')}}"></script>
 
 </body>
 </html>

@@ -4,11 +4,6 @@
     <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
         <div class="flex justify-center pt-8 sm:justify-start sm:pt-0">
             <h1>Strona Startowa</h1>
-            @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    <h2>Zalogowany</h2>
-                </div>
-            @endif
         </div>
     </div>
 @endsection

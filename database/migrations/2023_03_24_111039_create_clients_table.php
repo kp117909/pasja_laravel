@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string("first_name");
             $table->string("last_name");
             $table->string("phone");
+            $table->string("adress");
+            $table->string("postcode");
+            $table->string("icon_photo");
             $table->timestamps();
         });
     }

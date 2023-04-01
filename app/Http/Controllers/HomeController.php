@@ -14,6 +14,14 @@ class HomeController extends Controller
         return view('index');
     }
 
+    public function info(){
+        return view('info');
+    }
+
+    public function profil(){
+        return view('profil');
+    }
+
     public function login(){
         return view('login');
     }

@@ -32,15 +32,8 @@
     editable:true,
     select: async function (start, end, allDay) {
       const { value: formValues } = await Swal.fire({
-      title: 'Dodaj Klienta',
+      title: 'Dodaj wizytę',
       html:
-        '<div class="input-group mb-3">'+
-          '<input type="text" class="form-control" placeholder="Imie" aria-label="name" id = "name">'+
-          '<span class="input-group-text" id="basic-addon1">||</span>'+
-          '<input type="text" class="form-control" placeholder="Nazwisko" aria-label="surname" id = "surname">'+
-          '<span class="input-group-text" id="basic-addon1">+48</span>'+
-          '<input type="text" class="form-control" placeholder="Telefon" aria-label="phone" id = "phone" aria-describedby="basic-addon1">'+
-        '</div>' +
         '<label for="input_client">Wybierz Klienta z listy</label>'+
         '<select id ="select_client" class="form-control form-control-sm">'+
             @foreach ($clients as $client)
@@ -64,7 +57,7 @@
                           '{{ $service->service_name }} | {{ $service->price }} zł'+
                       '</label>'+
                       @endforeach
-                    '</div>'+ 
+                    '</div>'+
                 '</div>'+
           '</div>'+
           '<p class="font-weight-bold">Czas Usługi</p>'+
@@ -287,8 +280,8 @@
 </script>
 
 
-  <div style = "width:75%; height:50%; margin-top:4%; margin-left:15%;" id = "calendar"></div>
+  <div class = "border border-3" id = "calendar"></div>
 
-  
+
 @endsection
 
