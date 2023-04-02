@@ -33,6 +33,25 @@
     <nav id="sidebarMenu"  class="collapse d-lg-block sidebar collapse bg-white">
       <div class="position-sticky">
         <div  class="list-group list-group-flush mx-3 mt-4">
+            <div class = "relative flex items-top justify-center">
+                <a
+                    class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
+                    href="{{ route('home.profil') }}"
+                    id="navbarDropdownMenuLink"
+                    role="button"
+                    data-mdb-toggle="dropdown"
+                    aria-expanded="false"
+                >
+                    <img
+                        src="{{asset('png/'.auth()->user()->icon_photo)}}"
+                        class="icon rounded-circle border border-3"
+                        height="68"
+                        width = "68"
+                        alt="Avatar"
+                        loading="lazy"
+                    >
+                </a>
+            </div>
           <a
             href="{{ route('home.index') }}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
 
@@ -63,57 +82,6 @@
     </nav>
     <!-- Sidebar -->
 
-    <!-- Navbar -->
-    <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light fixed-top">
-      <div class="container-fluid">
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-mdb-toggle="collapse"
-          data-mdb-target="#sidebarMenu"
-          aria-controls="sidebarMenu"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <i class="fas fa-bars"></i>
-        </button>
-
-        <a class="navbar-brand ms-5" href="">
-          <img
-            src="{{url('png/logo.png')}}"
-            height="48"
-            alt="MDB Logo"
-            loading="lazy"
-          />
-        </a>
-
-
-        <ul class="navbar-nav ms-auto d-flex flex-row">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center"
-              href="{{ route('home.profil') }}"
-              id="navbarDropdownMenuLink"
-              role="button"
-              data-mdb-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <img
-                src="{{asset('png/'.auth()->user()->icon_photo)}}"
-                class="rounded-circle"
-                height="48"
-                width = "48"
-                alt="Avatar"
-                loading="lazy"
-              >
-                <div class="overlay">
-                    <div class="text">Profil</div>
-                </div>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </nav>
   </header>
 
 
