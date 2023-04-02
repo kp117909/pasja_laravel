@@ -59,7 +59,7 @@
                   </div>
 
                   @if(session('error'))
-                  <span class="text-danger"> {{ session('error') }}</span>
+                    <span class="text-danger"> {{ session('error') }}</span>
                   @endif
 
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->

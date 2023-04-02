@@ -10,31 +10,18 @@ use Hash;
 
 class AuthController extends Controller
 {
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function index()
     {
         return view('auth.login');
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
     public function registration()
     {
         return view('auth.registration');
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function postLogin(Request $request)
     {
         $request->validate([
@@ -50,11 +37,7 @@ class AuthController extends Controller
         return redirect('login')->withError('Nieprawidłowe dane!');
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function postRegistration(Request $request)
     {
         $request->validate([
@@ -74,11 +57,7 @@ class AuthController extends Controller
         return redirect("index")->withSuccess('Great! You have Successfully loggedin');
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function dashboard()
     {
         if (Auth::check()) {
@@ -88,11 +67,7 @@ class AuthController extends Controller
         return redirect("login")->withSuccess('Opps! You do not have access');
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function create(array $data)
     {
         return Clients::create([
@@ -104,11 +79,7 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Write code on Method
-     *
-     * @return response()
-     */
+
     public function logout()
     {
         Session::flush();

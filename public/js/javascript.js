@@ -6,6 +6,8 @@ document.querySelectorAll('.form-outline').forEach((formOutline) => {
     new mdb.Input(formOutline).init();
   });
 
+
+
 function start(e){
     input_value_price = 0
     console.log(e)
@@ -37,6 +39,46 @@ function values(){
     console.log(myList)
     return myList;
 }
+
+$(document).ready(function () {
+    $('#history_table').DataTable({
+        "dom": 'ftip',
+        "language": {
+            "zeroRecords": "Nie znaleziono",
+            "info": "Strona _PAGE_ z _PAGES_",
+            "search": "Szukaj:",
+            "infoEmpty": "Brak informacji do wyświetlenia",
+            "infoFiltered": "(Filtrowano z _MAX_ rekordów)",
+            "paginate": {
+                "previous": "",
+                "next": "",
+            }
+        },
+        "pageLength": 5,
+    });
+});
+
+$(function(){
+    $('#icon_photo').change(function(){
+        var input = this;
+        var url = $(this).val();
+        var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+        if (input.files && input.files[0]&& (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg"))
+        {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#my_photo').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+        else
+        {
+            $('#my_photo').attr('src', '/assets/no_preview.png');
+        }
+    });
+});
+
 
 var ctx = document.getElementById("myChart");
 
@@ -85,3 +127,40 @@ var myChart = new Chart(ctx, {
 //     $('#formValues').html(($('form').serialize()));
 //     e.preventDefault();
 // });
+
+
+/*******************************************************
+ * create a filter that will be used to determine
+ * which keystrokes are allowed in the input field
+ * and which are not. Since we're working exclusively
+ * with phone numbers, we'll need the following:
+ * -- digits 0 to 9 from the numeric keys
+ * -- digits 0 to 9 from the num pad keys
+ * -- arrow keys (left/right)
+ * -- backspace / delete for correcting
+ * -- tab key to allow focus to shift
+ *******************************************************/
+function formatPhoneNumber(value) {
+    value = this.replaceAll(value.trim(),"-","");
+
+    if(value.length > 3 && value.length <= 6)
+        value = value.slice(0,3) + "-" + value.slice(3);
+    else if(value.length > 6)
+        value = value.slice(0,3) + "-" + value.slice(3,6) + "-" + value.slice(6);
+
+    return value;
+}
+
+function phoneNumberFormat(){
+    const inputField = document.getElementById('phone');
+    const formattedInputValue = formatPhoneNumber(inputField.value);
+    inputField.value = formattedInputValue;
+}
+function replaceAll(src,search,replace){
+    return src.split(search).join(replace);
+}
+
+
+
+
+

@@ -1,28 +1,29 @@
 @extends('layout')
 
 @section('content')
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
-<div class="container rounded-3 bg-white opacity-90 mb-14">
+<div class="container rounded-3 bg-white opacity-90 mb-5">
     <form action="{{ route('client.update') }}" enctype="multipart/form-data" method="POST">
         @csrf
     <div class="row d-flex justify-content-end">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="d-flex flex-column align-items-center text-center p-6 py-2">
-                <img class="rounded-circle border border-3 mt-5" width="128px" height="128px" src="{{asset('png/'.auth()->user()->icon_photo)}}">
+                <img class="rounded-circle border border-3 mt-5" id ="my_photo" width="128px" height="128px" src="{{asset('png/'.auth()->user()->icon_photo)}}">
                 <span class="text-primary fw-bold"> {{ auth()->user()->first_name }}</span><span class="text-black-50">{{ auth()->user()->phone }}</span>
-                <div class="d-flex justify-content-between align-items-center">
-                    <h4 class="text-center">Wybierz zdjęcie</h4>
-                </div>
             </div>
-                <div class="input-group custom-file-button">
-                    <input type="file" class="form-control" name = "icon_photo" id="icon_photo">
+            <div class="d-flex justify-content-center">
+                <div class="btn btn-primary btn-rounded">
+                    <label class="form-label text-white m-1" for="icon_photo">Wybierz zdjęcie</label>
+                    <input type="file" name = "icon_photo" id="icon_photo" class="form-control d-none" />
                     <input type="number"  style = "display:none;" id = "id_client" name = "id_client" value = "{{ auth()->user()->id }}"/>
                 </div>
-        </div>
-        <div class="col-md-4 border-right">
+            </div>
             <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-right">Edycja Profilu</h4>
+                <div class="d-flex flex-column align-items-center text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="text-center">Edytuj dane</h4>
+                    </div>
                 </div>
                 <div class="form-outline mb-3">
                     <input type="text" id="first_name" name = "first_name" value = "{{ auth()->user()->first_name }}" class="form-control form-control" />
@@ -35,7 +36,7 @@
                 </div>
 
                 <div class="form-outline mb-3">
-                    <input type="tel" id="phone" name="phone" class="form-control form-control" value = "{{ auth()->user()->phone }}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required>
+                    <input type="text" id="phone" maxlength="11" name="phone" onkeydown="phoneNumberFormat()" oninvalid="this.setCustomValidity('Nieprawidłowy format')" class="form-control" value = "{{ auth()->user()->phone }}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required>
                     <label class="form-label" for="phone">Nr Telefonu [000-000-000]</label>
                 </div>
 
@@ -49,15 +50,17 @@
                     <label class="form-label" for="postcode">Kod pocztowy</label>
                 </div>
 
-                <div class="mt-5 text-center"><button class="btn btn-primary profile-button" type="submit">Zapisz zmiany</button></div>
+                <div class="mt-5 text-center"><button class="btn btn-primary profile-button btn-rounded" type="submit">Zapisz zmiany</button></div>
             </div>
         </div>
-        <div class="col-md-5">
+        <div class="col-md-8">
             <div class="p-3 py-5">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="text-right">Historia wizyt</h4>
+                <div class="d-flex flex-column align-items-center text-center">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="text-center">Historia wizyt</h4>
+                    </div>
                 </div>
-                <table class="table align-middle mb-0 bg-white">
+                <table id ="history_table" class="table align-middle mb-0 bg-white">
                     <thead class="bg-light">
                     <tr>
                         <th>Pracownik</th>
@@ -84,7 +87,7 @@
                                 </div>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#modal_{{$event->id}}">
+                                <button type="button" class="btn btn-primary btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_{{$event->id}}">
                                     Pokaż
                                 </button>
                                 {{--                            <p class="text-muted mb-0">Finance</p>--}}
@@ -114,8 +117,8 @@
                 </div>
                     <div class="modal-body"><ul class="list-group">
                         @foreach($services_events as $se)
-                            @if($se->id_event == $event->i d)
-                        <li class="list-group-item">{{$se->service_name}} | {{$se->price}}zł</li>
+                            @if($se->id_event == $event->id)
+                                <li class="list-group-item mb-2">{{$se->service_name}} | {{$se->price}}zł</li>
                             @endif
                         @endforeach
                         </ul>
@@ -127,6 +130,12 @@
         </div>
     </div>
 @endforeach
+<script>
 
+
+</script>
+
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
 @endsection
