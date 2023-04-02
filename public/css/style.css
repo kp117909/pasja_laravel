@@ -197,3 +197,7 @@ input[type="datetime-local"] {
     border: solid 1px #BA68C8
 }
 
+.modal-backdrop.show {
+    z-index: -1;
+}
+

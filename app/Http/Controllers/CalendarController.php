@@ -47,7 +47,7 @@ class CalendarController extends Controller
          'services' => Services::all(),
          'services_events' => ServicesEvents::all(),
         ]);
-    
+
     }
 
     // public function calendar(){
@@ -73,23 +73,10 @@ class CalendarController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $record_client = Clients::findOrFail($request->c_id);
         $record_worker = Workers::findOrFail($request->w_id);
-        
-        // $event = new Events();
 
-        // $event->title = "Event X";
-        // $event->name_c = "kamil";
-        // $event->surname_c = 'polak';
-        // $event->phone_c = "555-123-612";
-        // $event->name_w = "Pan";
-        // $event->surname_w = "Admin";
-        // $event->overal_price = $request->price;
-        // $event->start = $request->start;
-        // $event->end = $request->end;
-
-        // $event ->save();
         $services = $request->service_events;
 
         $event = Events::create([
@@ -97,8 +84,11 @@ class CalendarController extends Controller
             'name_c' => $record_client->first_name,
             'surname_c' => $record_client->last_name,
             'phone_c' => $record_client->phone,
+            'client_id' => $record_client->id,
             'name_w' => $record_worker->first_name,
             'surname_w' => $record_worker->last_name,
+            'worker_id' => $record_worker->id,
+            'worker_icon' => $record_worker->icon_photo,
             'overal_price' => $request->price,
             'start' => $request->start,
             'end' => $request->end,
@@ -160,7 +150,7 @@ class CalendarController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request)
-    {   
+    {
         $event = Events::where('id', $request->event_id)->update(
             [
                 'start' =>$request->start,
