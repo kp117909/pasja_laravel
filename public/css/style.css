@@ -61,14 +61,14 @@ nav {
     box-shadow: none!important;
 }
 
-@media(min-width: 1300px) {
+@media(max-width: 1500px) {
 
   .list-group-item{
     font-size: 10px!important;
   }
 
   .list-group-item:hover{
-    font-size: 11px!important;
+    font-size: 11git apx!important;
   }
 
   .container,.container-lg,.container-md,.container-sm,.container-xl {
@@ -77,11 +77,13 @@ nav {
   }
 }
 
-@media(min-height:700px){
+@media(max-height:800px){
   .container,.container-lg,.container-md,.container-sm,.container-xl{
     max-height: 650px!important;
   }
 }
+
+
 
 
 
