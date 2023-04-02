@@ -85,7 +85,7 @@
   </header>
 
 
-  <div style = " z-index: 3;" class="relative flex items-top justify-center min-h-screen sm:items-center py-8 sm:pt-0">
+  <div style = " z-index: 3;" class="relative d-flex items-center justify-content-center min-h-screen sm:items-center py-8 sm:pt-0">
     @yield('content')
   </div>
 
