@@ -6,8 +6,6 @@ document.querySelectorAll('.form-outline').forEach((formOutline) => {
     new mdb.Input(formOutline).init();
   });
 
-
-
 function start(e){
     input_value_price = 0
     console.log(e)
@@ -113,7 +111,6 @@ $(function(){
             $('#photo_service').attr('src', '/public/png/services_icons/dye.jpg');
         }
     });
-
 
 });
 

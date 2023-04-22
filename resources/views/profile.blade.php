@@ -96,12 +96,12 @@
                             </span>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-rounded">
+                                <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$service->id}}" id = "{{$service->id}}" class="btn btn-primary btn-rounded">
                                     Edytuj
                                 </button>
                             </td>
                             <td>
-                                <button type="button" name = "delete_button" onclick ="delete_service()" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
+                                <button type="button" name = "delete_button" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
                                     Usuń
                                 </button>
                             </td>
@@ -253,6 +253,54 @@
         </div>
     </div>
 @endforeach
+
+@foreach($services as $service)
+    <div class="modal fade" id="modalEdit_{{$service->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edycja usługi</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('services.update') }}" enctype="multipart/form-data" method="POST">
+                        @csrf
+                        <div>
+                            <div class = "row">
+                                <div class="col-md-7">
+                                    <div class="form-outline mb-3">
+                                        <input type="text" id="service_name" name = "service_name" value = "{{$service->service_name}}"  class="form-control form-control" />
+                                        <label class="form-label" for="service_name">Nazwa Usługi</label>
+                                        <input type="number"  style = "display:none;" id = "id_service" name = "id_service" value = "{{ $service->id}}"/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-outline mb-3">
+                                        <input type="number" id="price" name = "price" value = "{{$service->price}}" class="form-control form-control" />
+                                        <label class="form-label" for="price">Cena</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control form-control" />
+                                </div>
+
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <button type="submit" class="btn btn-success btn-rounded">
+                                        Potwierdź
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Zamknij</button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
 <script>
 
     $(".delete").click(function(){
@@ -285,10 +333,6 @@
                     },
                 })
             }});
-    });
-
-    $(function () {
-        $('select').selectpicker();
     });
 </script>
 

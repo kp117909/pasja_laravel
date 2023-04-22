@@ -72,11 +72,17 @@ class ServicesController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $service = Services::findOrFail($request->id_service);
+
+        $service->service_name = $request->service_name;
+        $service->price = $request->price;
+
+        $service-> save();
+        return Redirect('client.profile');
     }
 
     /**

@@ -66,6 +66,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::post('services.store', [ServicesController::class, 'store'])->name('services.store');
 
+    Route::post('services.update', [ServicesController::class, 'update'])->name('services.update');
+
     //end Services components
 
     //Calendar
