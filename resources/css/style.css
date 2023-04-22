@@ -28,7 +28,7 @@ nav {
     width: 240px;
     z-index: 600;
   }
-  
+
   @media (max-width: 991.98px) {
     .sidebar {
       width: 100%;
@@ -38,7 +38,7 @@ nav {
     border-radius: 5px;
     box-shadow: 0 2px 5px 0 rgb(0 0 0 / 16%), 0 2px 10px 0 rgb(0 0 0 / 12%);
   }
-  
+
   .sidebar-sticky {
     position: relative;
     top: 0;
@@ -95,3 +95,5 @@ input[type="datetime-local"] {
 	font-size: .8rem;
 	color: rgba(255, 255, 255, .5);
 }
+
+

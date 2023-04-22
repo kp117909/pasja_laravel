@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Clients;
+use App\Models\Services;
+use App\Models\Events;
+use Illuminate\Support\Facades\Auth;
 
 class ClientController extends Controller
 {
@@ -65,7 +68,7 @@ class ClientController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function update(Request $request)
     {
@@ -85,7 +88,20 @@ class ClientController extends Controller
             $client->icon_photo  = $filename;
         }
         $client-> save();
-        return Redirect('profil');
+        return Redirect('client.profile');
+    }
+
+    public function profile(Request $request){
+
+        $id = Auth::id();
+
+        $services_events = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_client', '=', $id)->get();
+
+        return view('profile', [
+        'events' => Events::where('client_id', $id)->get(),
+            'services_events' => $services_events,
+            'services'=>Services::all(),
+        ]);
     }
 
     /**

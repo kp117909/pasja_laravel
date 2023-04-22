@@ -23,19 +23,19 @@ class HomeController extends Controller
     public function info(){
         return view('info');
     }
-
-    public function profil(){
-
-        $id = Auth::id();
-
-        $services_events = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_client', '=', $id)->get();
-//         return response()->json($services_events);
-
-        return view('profil', [
-        'events' => Events::where('client_id', $id)->get(),
-            'services_events' => $services_events,
-        ]);
-    }
+//
+//    public function profile(){
+//
+//        $id = Auth::id();
+//
+//        $services_events = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_client', '=', $id)->get();
+////         return response()->json($services_events);
+//
+//        return view('profile', [
+//        'events' => Events::where('client_id', $id)->get(),
+//            'services_events' => $services_events,
+//        ]);
+//    }
 
 
     public function login(){

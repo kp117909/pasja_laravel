@@ -49,7 +49,7 @@
                         @endif
                       <div class="form-outline">
                         <input type="text" id="last_name" name = "last_name" class="form-control form-control-lg" />
-                        <label class="form-label" for="last_name">Nazwisko</label>                       
+                        <label class="form-label" for="last_name">Nazwisko</label>
                       </div>
 
                     </div>
@@ -91,7 +91,7 @@
                       <div class="form-outline">
                         <input type="password" id="re_password" name = "re_password" class="form-control form-control-lg" />
                         <label class="form-label" for="re_password">Powtórz hasło</label>
-                         
+
                       </div>
 
                     </div>

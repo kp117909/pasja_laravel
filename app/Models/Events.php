@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Kyslik\ColumnSortable\Sortable;
 
 class Events extends Model
 {
+    use Sortable;
     protected $fillable = [
         'id',
         'title',
@@ -22,5 +24,8 @@ class Events extends Model
         'start',
         'end',
     ];
+
+    public $sortable = ['id'];
+
     use HasFactory;
 }
