@@ -70,6 +70,9 @@ $(document).ready(function () {
         "pageLength": 5,
     });
 
+
+    document.getElementsByClassName("dropdown-item").style.color="blue";
+
 });
 
 // funkcja zamieniajaca ikone w zdjeciach
@@ -179,7 +182,10 @@ var myChart = new Chart(ctx, {
     },
 });
 
-
+$('.selectpicker').selectpicker({
+    style: 'btn btn-outline-dark',
+    size: 4,
+});
 
 
 
