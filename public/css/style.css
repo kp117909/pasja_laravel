@@ -77,14 +77,27 @@ nav {
   }
 }
 
-@media(max-height:800px){
-  .container,.container-lg,.container-md,.container-sm,.container-xl{
-    max-height: 650px!important;
-  }
+@media(max-width: 1300px) {
+
+    .list-group-item{
+        font-size: 10px!important;
+    }
+
+    .list-group-item:hover{
+        font-size: 11px!important;
+    }
+
+    .container,.container-lg,.container-md,.container-sm,.container-xl {
+        margin-bottom: 3vh!important;
+        max-width: 860px!important;
+    }
 }
 
-
-
+@media(max-height:800px){
+  .container,.container-lg,.container-md,.container-sm,.container-xl{
+    max-height: 685px!important;
+  }
+}
 
 
 .sidebar {
