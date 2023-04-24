@@ -39,6 +39,7 @@ class ServicesController extends Controller
         Services::create([
             'service_name' => $request['service_name'],
             'price' => $request['price'],
+            'time' => $request['time'],
             'img' => $request['select_icon_service']
             ]);
 

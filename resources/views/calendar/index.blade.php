@@ -39,18 +39,17 @@
               editable:true,
               select: async function (start, end, allDay) {
                   $('#modalAddVisit').modal('show');
+                  $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDThh:mm"))
+                  $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDThh:mm"))
               },
               eventRender: function (event, el, view) {
               },
               eventResize: function(event) {
-                  var id = event.event.id;
-                  var start_date = moment(event.event.start).format("YYYY-MM-DD h:mm:ss")
-                  var end_date = moment(event.event.end).format("YYYY-MM-DD h:mm:ss")
                   $.ajax({
                       url:"{{ route('calendar.update')}}",
                       type:"GET",
                       dataType:'json',
-                      data:{event_id: id, start: start_date, end:end_date},
+                      data:{event_id: event.event.id, start: moment(event.event.start).format("YYYY-MM-DD h:mm:ss"), end:moment(event.event.end).format("YYYY-MM-DD h:mm:ss")},
                       success:function(response)
                       {
                           Swal.fire({
@@ -291,16 +290,20 @@
                       @endforeach
                       </select>
                   <p class="font-weight-bold">Czas Usługi</p>
-                  <div class="datetimepicker">
-                      <span class="input-group-text" id="basic-addon1">Od</span>
-                      <input type="datetime-local" id="date_start" name="Test" class="form-control" format-value="YYYY-MM-DDTHH:mm:ss" value = "'+start.startStr.split('+',1)+'"  />
+                  <div class = "row">
+                      <div class="col-md-6 mb-2 pb-2">
+                          <div class="datetimepicker">
+                              <span class="input-group-text" id="basic-addon1">Od</span>
+                              <input type="datetime-local" id="date_start" name="date_start" class="form-control" />
+                          </div>
                       </div>
-                  <p class="font-weight-bold"></p>
-                  <div class="datetimepicker">
-                      <span class="input-group-text" id="basic-addon1">Do</span>
-                      <input type="datetime-local" id="date_end" name="Test" class="form-control" format-value="YYYY-MM-DDTHH:mm:ss" value = "'+start.endStr.split('+',1)+'"  />
+                      <div class="col-md-6 mb-2 pb-2">
+                          <div class="datetimepicker">
+                              <span class="input-group-text" id="basic-addon1">Do</span>
+                              <input type="datetime-local" id="date_end" name="date_end" class="form-control"/>
+                          </div>
                       </div>
-                  <p class="font-weight-bold">Kwota</p>
+                  </div>
                   <div class="input-group mb-3">
                       <div class="input-group-prepend">
                           <span class="input-group-text">Kwota Końcowa:</span>

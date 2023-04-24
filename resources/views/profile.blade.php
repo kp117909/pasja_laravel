@@ -48,7 +48,7 @@
                     <label class="form-label" for="postcode">Kod pocztowy</label>
                 </div>
 
-                <div class="mt-5 text-center"><button class="btn btn-primary profile-button btn-rounded" type="submit">Zapisz zmiany</button></div>
+                <div class="mt-5 text-center"><button class="btn btn-success btn-rounded" type="submit">Zapisz zmiany</button></div>
             </div>
             </form>
         </div>
@@ -63,9 +63,8 @@
                         <tr>
                             <th>@sortablelink('') Id</th>
                             <th>Usługa</th>
-                            <th>Kwota</th>
-                            <th>Edytuj</th>
-                            <th>Usuń</th>
+                            <th>Szczegóły</th>
+                            <th>Operacje</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -92,18 +91,22 @@
                             </td>
                             <td>
                             <span class="badge badge-primary rounded d-inline">
-                                {{$service->price}} zł
+                                {{$service->price}} zł / {{$service->time}} min
                             </span>
                             </td>
                             <td>
-                                <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$service->id}}" id = "{{$service->id}}" class="btn btn-primary btn-rounded">
-                                    Edytuj
-                                </button>
-                            </td>
-                            <td>
-                                <button type="button" name = "delete_button" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
-                                    Usuń
-                                </button>
+                                <div class="row" style = "padding-left: 0px">
+                                    <div class="col-md-4 mr-2">
+                                        <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$service->id}}" id = "{{$service->id}}" class="btn btn-primary btn-rounded">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                    </div>
+                                    <div class="col-md-4 ml-4">
+                                        <button type="button" name = "delete_button" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     @endforeach
@@ -196,22 +199,33 @@
                             <h4 class="text-center">Wprowadź dane</h4>
                         </div>
                         <div class = "row">
-                            <div class="col-md-7 mb-2 pb-2">
+                            <div class="col-md-12 mb-2 pb-2">
                                 <div class="form-outline mb-3">
-                                    <input type="text" id="service_name" name = "service_name"  class="form-control form-control" />
+                                    <input type="text" id="service_name" name = "service_name"  class="form-control" />
                                     <label class="form-label" for="service_name">Nazwa Usługi</label>
                                 </div>
                             </div>
 
-                         <div class="col-md-3 mb-2 pb-2">
-                             <div class="form-outline mb-3">
-                                 <input type="number" id="price" name = "price" class="form-control form-control" />
-                                 <label class="form-label" for="price">Cena</label>
+                             <div class="col-md-4 mb-2 pb-2">
+                                 <div class="form-outline mb-3">
+                                     <input type="number" id="price" name = "price" class="form-control" />
+                                     <label class="form-label" for="price">Cena</label>
+                                 </div>
                              </div>
-                         </div>
+
+                            <div class="col-md-2 mb-2 pb-2" >
+                                <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control" />
+                            </div>
+
+                            <div class="col-md-4 mb-2 pb-2">
+                                <div class="form-outline mb-3">
+                                    <input type="number" id="time" name = "time" class="form-control" />
+                                    <label class="form-label" for="time">Czas</label>
+                                </div>
+                            </div>
 
                             <div class="col-md-2 mb-2 pb-2">
-                                <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control form-control" />
+                                <input disabled type="text" placeholder="min" id="time_min" name = "time_min"  class="form-control" />
                             </div>
 
                             <div class="d-flex flex-column align-items-center text-center">
