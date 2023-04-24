@@ -38,28 +38,6 @@ function values(){
     return myList;
 }
 
-$("#select_services").change(function(){
-
-    calculateTotal()
-});
-
-function calculateTotal() {
-    // Get the select element
-    var selectElement = document.getElementById("select_services");
-
-    // Get all the selected options
-    var selectedOptions = selectElement.selectedOptions;
-
-    // Calculate the total sum
-    var total = 0;
-    for (var i = 0; i < selectedOptions.length; i++) {
-        total += parseInt(selectedOptions[i].value);
-    }
-
-    // Set the total sum to the input element
-    document.getElementById("overal_price").value = total;
-}
-
 $(document).ready(function () {
     $('#history_table').DataTable({
         "dom": 'ftip',
@@ -92,8 +70,6 @@ $(document).ready(function () {
         "pageLength": 5,
     });
 
-
-    document.getElementsByClassName("dropdown-item").style.color="blue";
 
 });
 
@@ -159,9 +135,6 @@ function replaceAll(src,search,replace){
     return src.split(search).join(replace);
 }
 
-
-
-
 var ctx = document.getElementById("myChart");
 
 var myChart = new Chart(ctx, {
@@ -206,7 +179,46 @@ var myChart = new Chart(ctx, {
 
 $('.selectpicker').selectpicker({
     style: 'btn btn-outline-dark',
+    liveSearch: true,
     size: 4,
+});
+
+$("#select_services").change(function(){
+    calculateTotal()
+});
+
+function calculateTotal() {
+
+    var selectElement = document.getElementById("select_services");
+
+    var selectedOptions = selectElement.selectedOptions;
+
+    var total = 0;
+    for (var i = 0; i < selectedOptions.length; i++) {
+        total += parseInt(selectedOptions[i].getAttribute("data-price"));
+    }
+
+    document.getElementById("overall_price").value = total;
+}
+
+var selectServices = document.getElementById("select_services");
+var totalServiceTime = 0;
+var dateStartInput = document.getElementById("date_start");
+var dateEndInput = document.getElementById("date_end");
+
+selectServices.addEventListener("change", function() {
+    totalServiceTime = 0;
+
+    for (var i = 0; i < selectServices.options.length; i++) {
+        if (selectServices.options[i].selected) {
+            totalServiceTime += parseInt(selectServices.options[i].getAttribute("data-time"));
+        }
+    }
+
+    var dateStart = new Date(dateStartInput.value);
+    var dateEnd = new Date(dateStart.getTime() + totalServiceTime * 60000 + 2 * 3600000);
+    dateEndInput.value = dateEnd.toISOString().slice(0, 16);
+
 });
 
 

@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonyous"></script>
 
-  <div class = "border border-3" id = "calendar"></div>
+  <div id = "calendar"></div>
 
   <script>
 
@@ -103,8 +103,7 @@
                       title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' +info.event.extendedProps.surname_c + "<br>Godzina: "  + info.event.start.getHours() + ":" + (info.event.start.getMinutes()<10?'0':'') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes()<10?'0':'') + info.event.end.getMinutes(),
                       icon: 'info',
                       html:'<p><h4><b>Pracownik</b>: '+info.event.extendedProps.name_w+ ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">'+
-                          '<ul class="list-group">' + services_list + '</ul>'+
-                          '<button type="button" class="btn btn-success btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_editCalendar">Edytuj Usługę</button>',
+                          '<ul class="list-group">' + services_list + '</ul>',
                       showCloseButton: true,
                       showCancelButton: true,
                       showDenyButton: true,
@@ -149,16 +148,29 @@
                                   @endforeach
                                       '</select>'+
                                   '<form class="container">'+
-                                  '<p class="font-weight-bold">Czas Usługi</p>'+
-                                  '<div class="datetimepicker">'+
-                                  '<span class="input-group-text" id="basic-addon1">Od</span>'+
-                                  '<input type="datetime-local" id="date_start" name="Test" class="form-control" format-value="YYYY-MM-DD h:mm:ss" value = "'+start_date+'"  />'+
-                                  '</div>'+
-                                  '<p class="font-weight-bold"></p>'+
-                                  '<div class="datetimepicker">'+
-                                  '<span class="input-group-text" id="basic-addon1">Do</span>'+
-                                  '<input type="datetime-local" id="date_end" name="Test" class="form-control" format-value="YYYY-MM-DD h:mm:ss" value = "'+end_date+'"  />'+
-                                  '</div>',
+                                  '<button type = "button" data-toggle="tooltip" data-placement="top" title="Czas usługi można zmieniać również poprzez przeciąganie w kalendarzu" >Czas Usługi</button>'+
+                                  '<div class = "row">'+
+                                  '   <div class="col-md-1"></div>'+
+                                  '   <div class="col-md-4">'+
+                                  '       <h4>Poczatęk</h4>'+
+                                  '   </div>'+
+                                  '   <div class="col-md-2"></div>'+
+                                  '   <div class="col-md-3">'+
+                                  '       <h4>Koniec</h4>'+
+                                  '   </div>'+
+                                  '   <div class="col-md-2"></div>'+
+                                  '   <div class = "row">'+
+                                  '       <div class="col-md-6 mb-4">'+
+                                  '           <div class="datetimepicker">'+
+                                  '               <input type="datetime-local" style="font-size:1rem;" value = "'+start_date+'" id="date_start" name="date_start" class="form-control" />'+
+                                  '           </div>'+
+                                  '       </div>'+
+                                  '       <div class="col-md-6 mb-4">'+
+                                  '           <div class="datetimepicker">'+
+                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end" value = "'+end_date+'" name="date_end" class="form-control"/>'+
+                                  '           </div>'+
+                                  '       </div>'+
+                              '   </div>',
                               focusConfirm: false,
                               showConfirmButton: true,
                               showCancelButton: true,
@@ -206,117 +218,78 @@
 
   </script>
 
-  <div class="modal fade" id="modal_editCalendar" tabindex="-1" aria-labelledby="modal_editCalendar" aria-hidden="true">
+
+  <div class="modal fade" id="modalAddVisit" tabindex="-1" aria-labelledby="modalAddVisit" aria-hidden="true">
       <div class="modal-dialog">
           <div class="modal-content">
-              <div class="modal-header">
-                  <h5 class="modal-title" id="modal_editCalendar">Dodaj nową usługę</h5>
-              </div>
-              <div class="modal-body">
-                  <form action="{{ route('services.store') }}" enctype="multipart/form-data" method="POST">
-                      @csrf
-                      <div class="d-flex flex-column align-items-center text-center">
-                          <h4 class="text-center">Wybierz zdjęcie</h4>
-                      </div>
-                      <div class="d-flex justify-content-center">
-                          <select class="selectpicker" name = "select_icon_service" data-live-search="true">
-                              <option data-tokens="IC1" value = "dye.jpg" data-content="<img src='{{asset('png/services_icons/dye.jpg')}}' style='width: 50%;'><span class='badge badge-primary'>IC 1</span>"></option>
-                              <option data-tokens="IC2" value = "scissors.png" data-content="<img src='{{asset('png/services_icons/scissors.png')}}' style='width: 50%;'><span class='badge badge-primary'>IC 2</span>"></option>
-                              <option data-tokens="IC3" value = "swithp.jpg" data-content="<img src='{{asset('png/services_icons/swithp.jpg')}}' style='width: 50%;'><span class='badge badge-primary'>IC 3</span>"></option>
-                          </select>
-                      </div>
-                      <div class="p-3 py-5">
-                          <div class="d-flex flex-column align-items-center text-center">
-                              <h4 class="text-center">Wprowadź dane</h4>
-                          </div>
-                          <div class = "row">
-                              <div class="col-md-7 mb-2 pb-2">
-                                  <div class="form-outline mb-3">
-                                      <input type="text" id="service_name" name = "service_name"  class="form-control form-control" />
-                                      <label class="form-label" for="service_name">Nazwa Usługi</label>
-                                  </div>
-                              </div>
-
-                              <div class="col-md-3 mb-2 pb-2">
-                                  <div class="form-outline mb-3">
-                                      <input type="number" id="price" name = "price" class="form-control form-control" />
-                                      <label class="form-label" for="price">Cena</label>
-                                  </div>
-                              </div>
-
-                              <div class="col-md-2 mb-2 pb-2">
-                                  <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control form-control" />
-                              </div>
-
-                              <div class="d-flex flex-column align-items-center text-center">
-                                  <button type="submit" class="btn btn-success btn-rounded">
-                                      Potwierdź
-                                  </button>
-                              </div>
-                          </div>
-                      </div>
-                  </form>
-              </div>
-          </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Zamknij</button>
-          </div>
-      </div>
-  </div>
-
-  <div class="modal fade" id="modalAddVisit" tabindex="-1" aria-labelledby="modal_editCalendar" aria-hidden="true">
-      <div class="modal-dialog">
-          <div class="modal-content">
-              <div class="modal-header">
-                  <h4 id="modalTitle" class="modal-title">Dodaj wizyte do kalendarza</h4>
+              <div class="d-flex flex-column align-items-center text-center mt-2">
+                  <h4 class="text-center">Dodaj wizytę do kalendarza <i class="fa-regular fa-calendar fa-flip" style="color: #2C3E50;"></i></h4>
               </div>
               <div id="modalBody" class="modal-body">
+                  <form action="{{ route('calendar.store') }}" enctype="multipart/form-data" method="POST">
+                      @csrf
                   <label for="input_client">Wybierz Klienta z listy</label>
-                  <select id ="select_client" class="form-control selectpicker">
+                  <select id ="select_client" name = "client" class="form-control selectpicker">
                       @foreach ($clients as $client)
-                          <option id = "{{$client->phone}}" value = "{{ $client->id }}">{{ $client->first_name }}  {{ $client->last_name }} </option>
-                      @endforeach
-                      </select>
-                  <label for="input_worker">Wybierz Pracownika</label>
-                  <select id ="select_worker" class="form-control selectpicker">
-                      @foreach($workers as $worker)
-                          <option id = " worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
+                          <option id = "client" value = "{{ $client->id }}">{{ $client->first_name }}  {{ $client->last_name }} </option>
                       @endforeach
                   </select>
-                  <label for="select_services">Wybierz Usługi z listy</label>
-                      <select id ="select_services" showSubtext class="selectpicker form-control" data-live-search="true" title='Wybierz usługi z listy...' multiple="multiple">
-                      @foreach($services as $service)
-                         <option class="services" data-subtext="{{ $service->price }} zł" id = "worker_{{$service->id}}" value = "{{ $service->price }}"> {{ $service->service_name }}</option>
+                  <label for="input_worker">Wybierz Pracownika</label>
+                  <select id ="select_worker" name = "worker" class="form-control selectpicker">
+                      @foreach($workers as $worker)
+                          <option id = "worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
                       @endforeach
-                      </select>
+                  </select>
+                  <label for="select_services">Rodzaje Usług</label>
+                  <select id ="select_services" name = "services[]" oninvalid="this.setCustomValidity('Wybierz usługi')" class="selectpicker form-control" title='Wybierz usługi z listy...' multiple required>
+                      @foreach($services as $service)
+                         <option class="services" data-subtext="{{ $service->price }} zł/ {{ $service->time }} min" data-time = "{{$service->time}}" data-price = "{{$service->price}}" value = "{{ $service->id }}"> {{ $service->service_name }}</option>
+                      @endforeach
+                  </select>
                   <p class="font-weight-bold">Czas Usługi</p>
                   <div class = "row">
-                      <div class="col-md-6 mb-2 pb-2">
+                      <div class="col-md-2"></div>
+                      <div class="col-md-4">
+                          <h4>Poczatęk</h4>
+                      </div>
+                      <div class="col-md-1"></div>
+                      <div class="col-md-3">
+                          <h4>Koniec</h4>
+                      </div>
+                      <div class="col-md-2"></div>
+                  <div class = "row">
+                      <div class="col-md-1 mb-4"></div>
+                      <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              <span class="input-group-text" id="basic-addon1">Od</span>
                               <input type="datetime-local" id="date_start" name="date_start" class="form-control" />
                           </div>
                       </div>
-                      <div class="col-md-6 mb-2 pb-2">
+                      <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              <span class="input-group-text" id="basic-addon1">Do</span>
                               <input type="datetime-local" id="date_end" name="date_end" class="form-control"/>
                           </div>
                       </div>
+                      <div class="col-md-1 mb-4"></div>
                   </div>
                   <div class="input-group mb-3">
                       <div class="input-group-prepend">
                           <span class="input-group-text">Kwota Końcowa:</span>
                           </div>
-                      <input type="number" value = "0" id = "overal_price" class="form-control" aria-label="Cena">
+                      <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena">
                       <div class="input-group-append">
                           <span class="input-group-text">zł</span>
                           </div>
                       </div>
-              </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-              </div>
+                  </div>
+                  <div class="d-flex flex-column align-items-center text-center">
+                      <button type="submit" class="btn btn-dark ">
+                          Potwierdź
+                      </button>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                  </div>
+              </form>
           </div>
       </div>
   </div>

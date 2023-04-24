@@ -56,6 +56,11 @@
                     >
                 </a>
             </div>
+            <a
+                href="{{ route('client.profile') }}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+
+                <i class="fa-solid fa-user fa-fw me-3"></i><span>Twój profil</span>
+            </a>
           <a
             href="{{ route('home.index') }}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
 

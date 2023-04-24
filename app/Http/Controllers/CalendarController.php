@@ -1,19 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Events;
 use App\Models\Clients;
 use App\Models\Workers;
 use App\Models\Services;
 use App\Models\ServicesEvents;
+use Illuminate\Http\Response;
 
 class CalendarController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      */
     public function index(Request $request)
     {
@@ -36,8 +41,6 @@ class CalendarController extends Controller
             ];
         }
 
-        // return response()->json($services);
-
         return view('calendar/index',
          [
          'events' => $events,
@@ -50,15 +53,10 @@ class CalendarController extends Controller
 
     }
 
-    // public function calendar(){
-
-    //     return view('calendar');
-    // }
-
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function create()
     {
@@ -68,18 +66,22 @@ class CalendarController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
 
-        $record_client = Clients::findOrFail($request->c_id);
-        $record_worker = Workers::findOrFail($request->w_id);
+        $record_client = Clients::findOrFail($request->client);
+        $record_worker = Workers::findOrFail($request->worker);
 
-        $services = $request->service_events;
+        $services = Services::findOrFail($request->services);
 
-        $event = Events::create([
+
+
+//        return json_encode($services);
+////
+       $event = Events::create([
             'title' => $record_client->last_name,
             'name_c' => $record_client->first_name,
             'surname_c' => $record_client->last_name,
@@ -89,23 +91,23 @@ class CalendarController extends Controller
             'surname_w' => $record_worker->last_name,
             'worker_id' => $record_worker->id,
             'worker_icon' => $record_worker->icon_photo,
-            'overal_price' => $request->price,
-            'start' => $request->start,
-            'end' => $request->end,
+            'overal_price' => 0,
+            'start' => $request->date_start,
+            'end' => $request->date_end,
         ]);
 
 
 
         foreach($services as $service){
-            $event_services = ServicesEvents::create([
-                'id_service' => $service['label_value'],
+             ServicesEvents::create([
+                'id_service' => $service->id,
                 'id_event' => $event->id,
                 'id_client' => $record_client->id,
                 'id_worker' => $record_worker->id,
             ]);
         }
 
-        return response()->json($event);
+        return Redirect('calendar/index');
 
     }
 
@@ -113,7 +115,7 @@ class CalendarController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show($id)
     {
@@ -123,8 +125,7 @@ class CalendarController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function edit(Request $request)
     {
@@ -145,9 +146,8 @@ class CalendarController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
     public function update(Request $request)
     {
@@ -165,8 +165,7 @@ class CalendarController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function destroy(Request $request)
     {

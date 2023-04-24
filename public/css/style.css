@@ -61,6 +61,23 @@ nav {
     box-shadow: none!important;
 }
 
+@media(max-width: 1700px) {
+
+    .list-group-item{
+        font-size: 10px!important;
+    }
+
+    .list-group-item:hover{
+        font-size: 11px!important;
+    }
+
+    .container,.container-lg,.container-md,.container-sm,.container-xl {
+        margin-bottom: 3vh!important;
+        max-width: 1140px!important;
+    }
+}
+
+
 @media(max-width: 1500px) {
 
   .list-group-item{
@@ -158,24 +175,18 @@ input[type="datetime-local"] {
 	border-radius: 4px;
 }
 
-.datetimepicker  span {
-		height: 1rem;
-		margin-right: .25rem;
-		margin-left: .25rem;
-		border-right: 1px solid #ddd;
-}
-
 .datetimepicker input {
   font: inherit;
   color: inherit;
   appearance: none;
   outline: none;
+  width: 13rem;
   border: 0;
   background-color: transparent;
 }
 
 .datetimepicker input[type=date] {
-  width: 10rem;
+  width: 12rem;
   border-right-width: 0;
 }
 
@@ -257,6 +268,27 @@ table.dataTable thead .sorting_desc_disabled:before {
 .dataTables_wrapper .dataTables_paginate {
     float: right;
 }
+
+.text-muted {
+    background-color: #dfe7f6;
+    --mdb-badge-padding-x: 0.65em;
+    --mdb-badge-padding-y: 0.35em;
+    --mdb-badge-font-size: 0.75em;
+    --mdb-badge-font-weight: 700;
+    --mdb-badge-color: #fff;
+    --mdb-badge-border-radius: 0.27rem;
+    display: inline-block;
+    padding: var(--mdb-badge-padding-y) var(--mdb-badge-padding-x);
+    font-size: var(--mdb-badge-font-size);
+    font-weight: var(--mdb-badge-font-weight);
+    line-height: 1;
+    color: var(--mdb-badge-color);
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: var(--mdb-badge-border-radius);
+}
+
 
 
 

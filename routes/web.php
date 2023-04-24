@@ -73,7 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Calendar
     Route::get('calendar/index', [CalendarController::class, 'index'])->name('calendar.index');
 
-    Route::get('calendar.store', [CalendarController::class, 'store'])->name('calendar.store');
+    Route::post('calendar.store', [CalendarController::class, 'store'])->name('calendar.store');
 
     Route::get('calendar.delete', [CalendarController::class, 'destroy'])->name('calendar.delete');
 

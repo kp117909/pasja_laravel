@@ -24,12 +24,11 @@
                     <h4 class="text-center">Edytuj dane</h4>
                 </div>
                 <div class="form-outline mb-3">
-                    <input type="text" id="first_name" name = "first_name" value = "{{ auth()->user()->first_name }}" class="form-control form-control" />
+                    <input type="text" id="first_name" name = "first_name" value = "{{ auth()->user()->first_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź imię')"  oninput="setCustomValidity('')" required/>
                     <label class="form-label" for="first_name">Imię</label>
                 </div>
-
                 <div class="form-outline mb-3">
-                    <input type="text" id="last_name" name = "last_name" value = "{{ auth()->user()->last_name }}" class="form-control form-control" />
+                    <input type="text" id="last_name" name = "last_name" value = "{{ auth()->user()->last_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź nazwisko')"  oninput="setCustomValidity('')" required/>
                     <label class="form-label" for="last_name">Nazwisko</label>
                 </div>
 
@@ -194,7 +193,6 @@
                             <option data-tokens="IC3" value = "swithp.jpg" data-content="<img src='{{asset('png/services_icons/swithp.jpg')}}' style='width: 50%;'><span class='badge badge-primary'>IC 3</span>"></option>
                         </select>
                     </div>
-                    <div class="p-3 py-5">
                         <div class="d-flex flex-column align-items-center text-center">
                             <h4 class="text-center">Wprowadź dane</h4>
                         </div>
@@ -234,7 +232,6 @@
                                 </button>
                             </div>
                         </div>
-                    </div>
                 </form>
                 </div>
             </div>
@@ -243,9 +240,8 @@
             </div>
         </div>
     </div>
-</div>
 
-@foreach($events as $event)
+    @foreach($events as $event)
     <div class="modal fade" id="modal_{{$event->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
