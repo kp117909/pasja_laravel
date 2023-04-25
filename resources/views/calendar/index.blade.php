@@ -7,9 +7,51 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonyous"></script>
 
-  <div id = "calendar"></div>
+
+    <div class = "row">
+        <div class="container rounded-3 bg-white opacity-90 mb-5 w-50">
+            <div class = "d-flex flex-column align-items-center text-center">
+                <ul class="list-inline">
+                @foreach($workers as $worker)
+                    <li class = "list-inline-item">
+                        <input class="form-check-input" id ="workers_filter" type="checkbox" checked value="{{$worker->id}}">
+                        {{ $worker->first_name }} {{ $worker -> last_name }}
+                        <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
+                    </li>
+                @endforeach
+                </ul>
+            </div>
+        </div>
+      <div id = "calendar"></div>
+    </div>
 
   <script>
+      $(document).ready(function() {
+          const inputs = document.querySelectorAll('#workers_filter');
+          var allowedValues = @json(session('values'));
+
+          if(allowedValues != null) {
+              inputs.forEach(input => {
+                  if (input.checked && !allowedValues.includes(input.value)) {
+                      input.checked = false;
+                  }
+              });
+          }
+          $('input[type=checkbox]').on('click', function() {
+              var checkbox = $(this);
+              const checkedInputs = Array.from(document.querySelectorAll('#workers_filter:checked'));
+              const values = checkedInputs.map(input => input.value);
+              $.ajax({
+                  url:"{{ route('calendar.index') }}",
+                  data: {
+                      values: values
+                  },
+                  success: function(data) {
+                      location.reload();
+                  }
+              });
+          });
+      });
 
       $.ajaxSetup({
           headers: {
@@ -32,15 +74,14 @@
               },
               height: 650,
               events:  events,
-              eventColor: '#6c757d',
               minTime: '06:00',
               maxTime: '21:00',
               selectable: true,
               editable:true,
               select: async function (start, end, allDay) {
                   $('#modalAddVisit').modal('show');
-                  $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDThh:mm"))
-                  $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDThh:mm"))
+                  $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDTHH:mm"))
+                  $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
               },
               eventRender: function (event, el, view) {
               },
@@ -49,7 +90,7 @@
                       url:"{{ route('calendar.update')}}",
                       type:"GET",
                       dataType:'json',
-                      data:{event_id: event.event.id, start: moment(event.event.start).format("YYYY-MM-DD h:mm:ss"), end:moment(event.event.end).format("YYYY-MM-DD h:mm:ss")},
+                      data:{event_id: event.event.id, start: moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss"), end:moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")},
                       success:function(response)
                       {
                           Swal.fire({
@@ -69,8 +110,8 @@
               },
               eventDrop: function(event) {
                   var id = event.event.id;
-                  var start_date = moment(event.event.start).format("YYYY-MM-DD hh:mm:ss")
-                  var end_date = moment(event.event.end).format("YYYY-MM-DD hh:mm:ss")
+                  var start_date = moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss")
+                  var end_date = moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")
                   $.ajax({
                       url:"{{ route('calendar.update')}}",
                       type:"GET",
@@ -136,8 +177,8 @@
                               },
                           })
                       } else if (result.isDenied) {
-                          var start_date = moment(info.event.start).format("YYYY-MM-DD hh:mm:ss")
-                          var end_date = moment(info.event.end).format("YYYY-MM-DD hh:mm:ss")
+                          var start_date = moment(info.event.start).format("YYYY-MM-DDTHH:mm:ss")
+                          var end_date = moment(info.event.end).format("YYYY-MM-DDTHH:mm:ss")
                           Swal.fire({
                               title: 'Edytuj Wizytę Klienta: <br> '+ info.event.extendedProps.name_c + ' ' +info.event.extendedProps.surname_c ,
                               html:
@@ -162,12 +203,12 @@
                                   '   <div class = "row">'+
                                   '       <div class="col-md-6 mb-4">'+
                                   '           <div class="datetimepicker">'+
-                                  '               <input type="datetime-local" style="font-size:1rem;" value = "'+start_date+'" id="date_start" name="date_start" class="form-control" />'+
+                                  '               <input type="datetime-local" style="font-size:1rem;" value = "'+start_date+'" id="date_start_edit" name="date_start_edit" class="form-control" />'+
                                   '           </div>'+
                                   '       </div>'+
                                   '       <div class="col-md-6 mb-4">'+
                                   '           <div class="datetimepicker">'+
-                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end" value = "'+end_date+'" name="date_end" class="form-control"/>'+
+                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "'+end_date+'" name="date_end_edit" class="form-control"/>'+
                                   '           </div>'+
                                   '       </div>'+
                               '   </div>',
@@ -178,14 +219,15 @@
                               confirmButtonText: 'Zapisz',
                           }).then((result) => {
                               if (result.value) {
-                                  var start_date = document.getElementById('date_start').value;
-                                  var end_date = document.getElementById('date_end').value;
+                                  var start_date = document.getElementById('date_start_edit').value;
+                                  var end_date = document.getElementById('date_end_edit').value;
                                   var worker_id = document.querySelector('#select_worker').value;
+
                                   $.ajax({
                                       url:"{{ route('calendar.edit') }}",
                                       type:"GET",
                                       dataType:'json',
-                                      data:{event_id:info.event.id, start : start_date, end: end_date, w_id : worker_id},
+                                      data:{event_id:info.event.id, start : moment(start_date).format("YYYY-MM-DDTHH:mm:ss"), end: moment(end_date).format("YYYY-MM-DDTHH:mm:ss"), w_id : worker_id},
                                       success:function(response)
                                       {
                                           Swal.fire({
@@ -241,7 +283,7 @@
                       @endforeach
                   </select>
                   <label for="select_services">Rodzaje Usług</label>
-                  <select id ="select_services" name = "services[]" oninvalid="this.setCustomValidity('Wybierz usługi')" class="selectpicker form-control" title='Wybierz usługi z listy...' multiple required>
+                  <select id ="select_services" name = "services[]" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz usługi')" class="selectpicker form-control" title='Wybierz usługi z listy...' multiple required>
                       @foreach($services as $service)
                          <option class="services" data-subtext="{{ $service->price }} zł/ {{ $service->time }} min" data-time = "{{$service->time}}" data-price = "{{$service->price}}" value = "{{ $service->id }}"> {{ $service->service_name }}</option>
                       @endforeach

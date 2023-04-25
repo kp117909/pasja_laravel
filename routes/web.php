@@ -80,6 +80,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('calendar.update', [CalendarController::class, 'update'])->name('calendar.update');
 
     Route::get('calendar.edit', [CalendarController::class, 'edit'])->name('calendar.edit');
+
+    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
     //end Calendar
 
 });

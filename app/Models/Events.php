@@ -21,6 +21,7 @@ class Events extends Model
         'worker_id',
         'worker_icon',
         'overal_price',
+        'color',
         'start',
         'end',
     ];
