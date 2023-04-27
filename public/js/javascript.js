@@ -222,5 +222,23 @@ selectServices.addEventListener("change", function() {
 });
 
 
+function resetSelects(){
+    $('.selectpicker').selectpicker('deselectAll')
+}
+
+function calculateTime(){
+    totalServiceTime = 0;
+
+    for (var i = 0; i < selectServices.options.length; i++) {
+        if (selectServices.options[i].selected) {
+            totalServiceTime += parseInt(selectServices.options[i].getAttribute("data-time"));
+        }
+    }
+
+    var dateStart = new Date(dateStartInput.value);
+    var dateEnd = new Date(dateStart.getTime() + totalServiceTime * 60000 + 2 * 3600000);
+    dateEndInput.value = dateEnd.toISOString().slice(0, 16);
+}
+
 
 

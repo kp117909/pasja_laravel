@@ -9,6 +9,7 @@
 
 
     <div class = "row">
+
         <div class="container rounded-3 bg-white opacity-90 mb-5 w-50">
             <div class = "d-flex flex-column align-items-center text-center">
                 <ul class="list-inline">
@@ -22,7 +23,9 @@
                 </ul>
             </div>
         </div>
+
       <div id = "calendar"></div>
+
     </div>
 
   <script>
@@ -52,9 +55,11 @@
               selectable: true,
               editable: true,
               select: async function (start, end, allDay) {
+                  resetSelects();
                   $('#modalAddVisit').modal('show');
                   $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDTHH:mm"))
                   $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
+                  calculateTime();
               },
               eventRender: function (event, el , view) {
                   var eventPath = event.event
@@ -184,7 +189,7 @@
                                   '<label for="input_worker">Zmień Pracownika</label>' +
                                   ' <select class="form-control form-control-sm">>' +
                                   @foreach($workers as $worker)
-                                      '<option id = " worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
+                                      '<option id = "worker_id_edit" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
                                   @endforeach
                                       '</select>' +
                                   '<form class="container">' +
@@ -220,7 +225,7 @@
                               if (result.value) {
                                   var start_date = document.getElementById('date_start_edit').value;
                                   var end_date = document.getElementById('date_end_edit').value;
-                                  var worker_id = document.querySelector('#select_worker').value;
+                                  var worker_id = document.querySelector('#worker_id_edit').value;
 
                                   $.ajax({
                                       url: "{{ route('calendar.edit') }}",
@@ -234,7 +239,7 @@
                                       },
                                       success: function (response) {
                                           Swal.fire({
-                                              title: "Wizyta usunięta pomyślnie!",
+                                              title: "Wizyta edytowana pomyślnie!",
                                               text: "HairLink",
                                               icon: "success",
                                               showConfirmButton: true,
@@ -300,15 +305,14 @@
                         showConfirmButton: true,
                     }).then((result) =>{
                         calendar.refetchEvents();
-                        // location.reload();
-                        // console.log(response)
+                        hideModal();
                     });
                     calendar.refetchEvents();
                 },
                 error:function(error)
                 {
                     console.log(error)
-                    Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
+                    Swal.fire('Nie udało sie dodać wizyty!', '', 'error');
                 },
             })
         }
@@ -322,21 +326,22 @@
                   <h4 class="text-center">Dodaj wizytę do kalendarza <i class="fa-regular fa-calendar fa-flip" style="color: #2C3E50;"></i></h4>
               </div>
               <div id="modalBody" class="modal-body">
+                  <form onsubmit="addVisitCalendar();return false">
                       @csrf
-                  <label for="input_client">Wybierz Klienta z listy</label>
-                  <select id ="select_client" name = "client" class="form-control selectpicker">
+                  <label for="select_client">Wybierz Klienta z listy</label>
+                  <select id ="select_client" data-max-options="1" name = "client" title='Wybierz Klienta z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Klienta')" multiple required>
                       @foreach ($clients as $client)
                           <option id = "client" value = "{{ $client->id }}">{{ $client->first_name }}  {{ $client->last_name }} </option>
                       @endforeach
                   </select>
-                  <label for="input_worker">Wybierz Pracownika</label>
-                  <select id ="select_worker" name = "worker" class="form-control selectpicker">
+                  <label for="select_worker">Wybierz Pracownika</label>
+                  <select id ="select_worker" data-max-options="1" name = "worker" title='Wybierz Pracownika z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Pracownika')" multiple required>
                       @foreach($workers as $worker)
-                          <option id = "worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
+                          <option id = "worker"  value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
                       @endforeach
                   </select>
                   <label for="select_services">Rodzaje Usług</label>
-                  <select id ="select_services" name = "services[]" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz usługi')" class="selectpicker form-control" title='Wybierz usługi z listy...' multiple required>
+                  <select id ="select_services" data-show-subtext="true" name = "services[]" data-actions-box="true"  onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz usługi')" class="selectpicker form-control" title='Wybierz usługi z listy...' multiple required>
                       @foreach($services as $service)
                          <option class="services" data-subtext="{{ $service->price }} zł/ {{ $service->time }} min" data-time = "{{$service->time}}" data-price = "{{$service->price}}" value = "{{ $service->id }}"> {{ $service->service_name }}</option>
                       @endforeach
@@ -376,17 +381,28 @@
                           </div>
                       </div>
                   </div>
-                  <div class="d-flex flex-column align-items-center text-center">
-                      <button type="button" onclick = "addVisitCalendar()" class="btn btn-dark ">
-                          Potwierdź
-                      </button>
-                  </div>
+
                   <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                      <div class="d-flex flex-column align-items-center text-center">
+                          <button type="submit" class="btn btn-dark ">
+                              Potwierdź
+                          </button>
+                      </div>
+                      <button type="button" class="btn btn-info" onclick = "resetSelects()" data-bs-toggle="modal">Wyczyść</button>
+                      <button type="button" class="btn btn-default" onclick = "hideModal()" data-bs-toggle="modal">Zamknij</button>
                   </div>
+                  </form>
           </div>
       </div>
   </div>
+  </div>
+
+    <script>
+        function hideModal(){
+            $('#modalAddVisit').modal('hide');
+        }
+    </script>
+
 
 
   <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
