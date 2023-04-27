@@ -14,7 +14,7 @@
                 <ul class="list-inline">
                 @foreach($workers as $worker)
                     <li class = "list-inline-item">
-                        <input class="form-check-input" id ="workers_filter" type="checkbox" checked value="{{$worker->id}}">
+                        <input class="filter form-check-input" id ="workers_filter" type="checkbox" value="{{$worker->last_name}}_{{$worker->id}}" checked>
                         {{ $worker->first_name }} {{ $worker -> last_name }}
                         <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
                     </li>
@@ -26,32 +26,6 @@
     </div>
 
   <script>
-      $(document).ready(function() {
-          const inputs = document.querySelectorAll('#workers_filter');
-          var allowedValues = @json(session('values'));
-
-          if(allowedValues != null) {
-              inputs.forEach(input => {
-                  if (input.checked && !allowedValues.includes(input.value)) {
-                      input.checked = false;
-                  }
-              });
-          }
-          $('input[type=checkbox]').on('click', function() {
-              var checkbox = $(this);
-              const checkedInputs = Array.from(document.querySelectorAll('#workers_filter:checked'));
-              const values = checkedInputs.map(input => input.value);
-              $.ajax({
-                  url:"{{ route('calendar.index') }}",
-                  data: {
-                      values: values
-                  },
-                  success: function(data) {
-                      location.reload();
-                  }
-              });
-          });
-      });
 
       $.ajaxSetup({
           headers: {
@@ -59,12 +33,11 @@
           }
       });
 
-      document.addEventListener('DOMContentLoaded', function() {
-          var events = @json($events);
+      // document.addEventListener('DOMContentLoaded', function() {
           var calendarEl = document.getElementById('calendar');
           var initialView = 'timeGridWeek';
           var calendar = new FullCalendar.Calendar(calendarEl, {
-              plugins: [ 'interaction', 'dayGrid', 'timeGrid', 'list',],
+              plugins: ['interaction', 'dayGrid', 'timeGrid', 'list',],
               initialView: 'timeGridWeek',
               locale: 'pl',
               header: {
@@ -73,77 +46,105 @@
                   right: 'dayGridMonth,timeGridWeek,timeGridDay'
               },
               height: 650,
-              events:  events,
+              events: {url: '/calendar.events'},
               minTime: '06:00',
               maxTime: '21:00',
               selectable: true,
-              editable:true,
+              editable: true,
               select: async function (start, end, allDay) {
                   $('#modalAddVisit').modal('show');
                   $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDTHH:mm"))
                   $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
               },
-              eventRender: function (event, el, view) {
+              eventRender: function (event, el , view) {
+                  var eventPath = event.event
+                  // console.log(event)
+                  // event.el.popover({
+                  //     title:    '<div class="popoverTitleCalendar" style="background-color:'+ eventPath.backgroundColor +'; color:white;'+ eventPath.title +'</div>',
+                  //     content:  '<div class="popoverInfoCalendar">' +
+                  //         '<p><strong>Dane Pracownika:</strong> ' + eventPath.extendedProps.name_w + ' ' + eventPath.extendedProps.surname_w + '</p>' +
+                  //         '<p><strong>Dane Klienta:</strong> ' + eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c + '</p>' +
+                  //         '<div class="popoverDescCalendar"><strong>Description:</strong> LORE IPSUM </div>' +
+                  //         '</div>',
+                  //     delay: {
+                  //         show: "800",
+                  //         hide: "50"
+                  //     },
+                  //     trigger: 'hover',
+                  //     // placement: 'top',
+                  //     // html: true,
+                  //     // container: 'body'
+                  // });
+
+                  var username = $('input:checkbox.filter:checked').map(function() {
+                      return $(this).val();
+                  }).get();
+                  var getIndex = eventPath.extendedProps.surname_w + "_" + eventPath.extendedProps.worker_id;
+                  show_username = username.indexOf(getIndex) >= 0;
+
+                  return show_username
               },
-              eventResize: function(event) {
+
+              eventResize: function (event) {
                   $.ajax({
-                      url:"{{ route('calendar.update')}}",
-                      type:"GET",
-                      dataType:'json',
-                      data:{event_id: event.event.id, start: moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss"), end:moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")},
-                      success:function(response)
-                      {
+                      url: "{{ route('calendar.update')}}",
+                      type: "GET",
+                      dataType: 'json',
+                      data: {
+                          event_id: event.event.id,
+                          start: moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss"),
+                          end: moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")
+                      },
+                      success: function (response) {
                           Swal.fire({
                               title: "Czas wizyty edytowany pomyślnie!",
-                              text: "Naciśnij przycisk aby przeładować stronę",
+                              text: "HairLink",
                               icon: "success",
                               showConfirmButton: true
-                          }).then((result) =>{
-                              location.reload();
+                          }).then((result) => {
+                              calendar.refetchEvents();
                           });
                       },
-                      error:function(error)
-                      {
+                      error: function (error) {
                           console.log(error)
                       },
                   });
               },
-              eventDrop: function(event) {
+              eventDrop: function (event) {
                   var id = event.event.id;
                   var start_date = moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss")
                   var end_date = moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")
                   $.ajax({
-                      url:"{{ route('calendar.update')}}",
-                      type:"GET",
-                      dataType:'json',
-                      data:{event_id: id, start: start_date, end:end_date},
-                      success:function(response)
-                      {
+                      url: "{{ route('calendar.update')}}",
+                      type: "GET",
+                      dataType: 'json',
+                      data: {event_id: id, start: start_date, end: end_date},
+                      success: function (response) {
                           Swal.fire({
                               title: "Czas wizyty edytowany pomyślnie!",
-                              text: "Naciśnij przycisk aby przeładować stronę",
+                              text: "HairLink",
                               icon: "success",
                               showConfirmButton: true
-                          }).then((result) =>{
-                              location.reload();
+                          }).then((result) => {
+                              calendar.refetchEvents();
                           });
                       },
-                      error:function(error)
-                      {
+                      error: function (error) {
                           console.log(error)
                       },
                   });
               },
-              eventClick: function(info) {
-                  var client_services = info.event.extendedProps.events;var services_list = "";
-                  client_services.forEach((e)=> {
+              eventClick: function (info) {
+                  var client_services = info.event.extendedProps.events;
+                  var services_list = "";
+                  client_services.forEach((e) => {
                       services_list = services_list + "<li class='list-group-item'>" + e.service_name + "</li>";
                   });
                   info.el.style.borderColor = 'black';
                   Swal.fire({
-                      title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' +info.event.extendedProps.surname_c + "<br>Godzina: "  + info.event.start.getHours() + ":" + (info.event.start.getMinutes()<10?'0':'') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes()<10?'0':'') + info.event.end.getMinutes(),
+                      title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
                       icon: 'info',
-                      html:'<p><h4><b>Pracownik</b>: '+info.event.extendedProps.name_w+ ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">'+
+                      html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
                           '<ul class="list-group">' + services_list + '</ul>',
                       showCloseButton: true,
                       showCancelButton: true,
@@ -155,24 +156,22 @@
                       if (result.isConfirmed) {
                           // Delete event
                           $.ajax({
-                              url:"{{ route('calendar.delete') }}",
-                              type:"GET",
-                              dataType:'json',
-                              data:{event_id:info.event.id},
-                              success:function(response)
-                              {
+                              url: "{{ route('calendar.delete') }}",
+                              type: "GET",
+                              dataType: 'json',
+                              data: {event_id: info.event.id},
+                              success: function (response) {
                                   Swal.fire({
                                       title: "Wizyta usunięta pomyślnie!",
-                                      text: "Naciśnij przycisk aby przeładować stronę",
+                                      text: "HairLink",
                                       icon: "success",
                                       showConfirmButton: true
-                                  }).then((result) =>{
-                                      location.reload();
+                                  }).then((result) => {
+                                      calendar.refetchEvents();
                                   });
                                   calendar.refetchEvents();
                               },
-                              error:function(error)
-                              {
+                              error: function (error) {
                                   Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
                               },
                           })
@@ -180,38 +179,38 @@
                           var start_date = moment(info.event.start).format("YYYY-MM-DDTHH:mm:ss")
                           var end_date = moment(info.event.end).format("YYYY-MM-DDTHH:mm:ss")
                           Swal.fire({
-                              title: 'Edytuj Wizytę Klienta: <br> '+ info.event.extendedProps.name_c + ' ' +info.event.extendedProps.surname_c ,
+                              title: 'Edytuj Wizytę Klienta: <br> ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c,
                               html:
-                                  '<label for="input_worker">Zmień Pracownika</label>'+
-                                  ' <select class="form-control form-control-sm">>'+
+                                  '<label for="input_worker">Zmień Pracownika</label>' +
+                                  ' <select class="form-control form-control-sm">>' +
                                   @foreach($workers as $worker)
-                                      '<option id = " worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>'+
+                                      '<option id = " worker" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
                                   @endforeach
-                                      '</select>'+
-                                  '<form class="container">'+
-                                  '<button type = "button" data-toggle="tooltip" data-placement="top" title="Czas usługi można zmieniać również poprzez przeciąganie w kalendarzu" >Czas Usługi</button>'+
-                                  '<div class = "row">'+
-                                  '   <div class="col-md-1"></div>'+
-                                  '   <div class="col-md-4">'+
-                                  '       <h4>Poczatęk</h4>'+
-                                  '   </div>'+
-                                  '   <div class="col-md-2"></div>'+
-                                  '   <div class="col-md-3">'+
-                                  '       <h4>Koniec</h4>'+
-                                  '   </div>'+
-                                  '   <div class="col-md-2"></div>'+
-                                  '   <div class = "row">'+
-                                  '       <div class="col-md-6 mb-4">'+
-                                  '           <div class="datetimepicker">'+
-                                  '               <input type="datetime-local" style="font-size:1rem;" value = "'+start_date+'" id="date_start_edit" name="date_start_edit" class="form-control" />'+
-                                  '           </div>'+
-                                  '       </div>'+
-                                  '       <div class="col-md-6 mb-4">'+
-                                  '           <div class="datetimepicker">'+
-                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "'+end_date+'" name="date_end_edit" class="form-control"/>'+
-                                  '           </div>'+
-                                  '       </div>'+
-                              '   </div>',
+                                      '</select>' +
+                                  '<form class="container">' +
+                                  '<button type = "button" data-toggle="tooltip" data-placement="top" title="Czas usługi można zmieniać również poprzez przeciąganie w kalendarzu" >Czas Usługi</button>' +
+                                  '<div class = "row">' +
+                                  '   <div class="col-md-1"></div>' +
+                                  '   <div class="col-md-4">' +
+                                  '       <h4>Poczatęk</h4>' +
+                                  '   </div>' +
+                                  '   <div class="col-md-2"></div>' +
+                                  '   <div class="col-md-3">' +
+                                  '       <h4>Koniec</h4>' +
+                                  '   </div>' +
+                                  '   <div class="col-md-2"></div>' +
+                                  '   <div class = "row">' +
+                                  '       <div class="col-md-6 mb-4">' +
+                                  '           <div class="datetimepicker">' +
+                                  '               <input type="datetime-local" style="font-size:1rem;" value = "' + start_date + '" id="date_start_edit" name="date_start_edit" class="form-control" />' +
+                                  '           </div>' +
+                                  '       </div>' +
+                                  '       <div class="col-md-6 mb-4">' +
+                                  '           <div class="datetimepicker">' +
+                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "' + end_date + '" name="date_end_edit" class="form-control"/>' +
+                                  '           </div>' +
+                                  '       </div>' +
+                                  '   </div>',
                               focusConfirm: false,
                               showConfirmButton: true,
                               showCancelButton: true,
@@ -224,24 +223,27 @@
                                   var worker_id = document.querySelector('#select_worker').value;
 
                                   $.ajax({
-                                      url:"{{ route('calendar.edit') }}",
-                                      type:"GET",
-                                      dataType:'json',
-                                      data:{event_id:info.event.id, start : moment(start_date).format("YYYY-MM-DDTHH:mm:ss"), end: moment(end_date).format("YYYY-MM-DDTHH:mm:ss"), w_id : worker_id},
-                                      success:function(response)
-                                      {
+                                      url: "{{ route('calendar.edit') }}",
+                                      type: "GET",
+                                      dataType: 'json',
+                                      data: {
+                                          event_id: info.event.id,
+                                          start: moment(start_date).format("YYYY-MM-DDTHH:mm:ss"),
+                                          end: moment(end_date).format("YYYY-MM-DDTHH:mm:ss"),
+                                          w_id: worker_id
+                                      },
+                                      success: function (response) {
                                           Swal.fire({
                                               title: "Wizyta usunięta pomyślnie!",
-                                              text: "Naciśnij przycisk aby przeładować stronę",
+                                              text: "HairLink",
                                               icon: "success",
                                               showConfirmButton: true,
-                                          }).then((result) =>{
-                                              location.reload();
+                                          }).then((result) => {
+                                              calendar.refetchEvents();
                                           });
                                           calendar.refetchEvents();
                                       },
-                                      error:function(error)
-                                      {
+                                      error: function (error) {
                                           Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
                                       },
                                   })
@@ -256,9 +258,61 @@
           });
           calendar.render();
           calendar.changeView(initialView);
+
+
+      $('.filter').on('change', function() {
+          calendar.refetchEvents();
       });
 
   </script>
+
+    <script>
+
+        function addVisitCalendar(){
+            var selectedServices = [];
+            $("#select_services option:selected").each(function() {
+                var service = {
+                    id: $(this).val(),
+                    name: $(this).text(),
+                    price: $(this).data('price'),
+                    time: $(this).data('time')
+                };
+                selectedServices.push(service);
+            });
+            $.ajax({
+                url:"{{ route('calendar.store') }}",
+                type:"GET",
+                dataType:'json',
+                data:{
+                    client:document.getElementById("select_client").value,
+                    worker : document.getElementById("select_worker").value,
+                    services: selectedServices,
+                    overall_price: document.getElementById("overall_price").value,
+                    date_start : moment(document.getElementById("date_start").value).format("YYYY-MM-DDTHH:mm:ss"),
+                    date_end: moment(document.getElementById("date_end").value).format("YYYY-MM-DDTHH:mm:ss")
+                },
+                success:function(response)
+                {
+                    Swal.fire({
+                        title: "Wizyta dodana pomyślnie!",
+                        text: "HairLink",
+                        icon: "success",
+                        showConfirmButton: true,
+                    }).then((result) =>{
+                        calendar.refetchEvents();
+                        // location.reload();
+                        // console.log(response)
+                    });
+                    calendar.refetchEvents();
+                },
+                error:function(error)
+                {
+                    console.log(error)
+                    Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
+                },
+            })
+        }
+    </script>
 
 
   <div class="modal fade" id="modalAddVisit" tabindex="-1" aria-labelledby="modalAddVisit" aria-hidden="true">
@@ -268,7 +322,6 @@
                   <h4 class="text-center">Dodaj wizytę do kalendarza <i class="fa-regular fa-calendar fa-flip" style="color: #2C3E50;"></i></h4>
               </div>
               <div id="modalBody" class="modal-body">
-                  <form action="{{ route('calendar.store') }}" enctype="multipart/form-data" method="POST">
                       @csrf
                   <label for="input_client">Wybierz Klienta z listy</label>
                   <select id ="select_client" name = "client" class="form-control selectpicker">
@@ -324,14 +377,13 @@
                       </div>
                   </div>
                   <div class="d-flex flex-column align-items-center text-center">
-                      <button type="submit" class="btn btn-dark ">
+                      <button type="button" onclick = "addVisitCalendar()" class="btn btn-dark ">
                           Potwierdź
                       </button>
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
                   </div>
-              </form>
           </div>
       </div>
   </div>
