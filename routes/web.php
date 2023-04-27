@@ -73,7 +73,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Calendar
     Route::get('calendar/index', [CalendarController::class, 'index'])->name('calendar.index');
 
-    Route::post('calendar.store', [CalendarController::class, 'store'])->name('calendar.store');
+    Route::get('calendar.store', [CalendarController::class, 'store'])->name('calendar.store');
 
     Route::get('calendar.delete', [CalendarController::class, 'destroy'])->name('calendar.delete');
 
@@ -81,7 +81,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('calendar.edit', [CalendarController::class, 'edit'])->name('calendar.edit');
 
-    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
+//    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
+
+    Route::get('/calendar.events', [CalendarController::class, 'getEvents']);
     //end Calendar
 
 });

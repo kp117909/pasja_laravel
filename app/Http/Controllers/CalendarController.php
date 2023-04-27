@@ -20,79 +20,82 @@ class CalendarController extends Controller
      *
      * @return Application|Factory|View
      */
+//    public function index(Request $request)
+//    {
+//        $events = array();
+//        $bookings = Events::all();
+//        $services = array();
+//        if($request->values != null){
+//            session()->put('values',$request->values);
+//            foreach($bookings as $booking){
+//                $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
+//                foreach($request->values as $value)
+//                    if($booking->worker_id == $value) {
+//                        $events[] = [
+//                            'id' => $booking->id,
+//                            'title' => $booking->title,
+//                            'name_c' => $booking->name_c,
+//                            'surname_c' => $booking->surname_c,
+//                            'name_w' => $booking->name_w,
+//                            'surname_w' => $booking->surname_w,
+//                            'overal_price' => $booking->overal_price,
+//                            'start' => $booking->start,
+//                            'end' => $booking->end,
+//                            'color' => $booking->color,
+//                            'events' => $services,
+//                        ];
+//                    }
+//            }
+//        }elseif(session('values') != null) {
+//            foreach ($bookings as $booking) {
+//                $services = Services::leftJoin('services_events', function ($join) {
+//                    $join->on('id', '=', 'id_service');
+//                })->where('id_event', '=', $booking->id)->get();
+//                foreach (session('values') as $value){
+//                    if ($booking->worker_id == $value) {
+//                        $events[] = [
+//                            'id' => $booking->id,
+//                            'title' => $booking->title,
+//                            'name_c' => $booking->name_c,
+//                            'surname_c' => $booking->surname_c,
+//                            'name_w' => $booking->name_w,
+//                            'surname_w' => $booking->surname_w,
+//                            'overal_price' => $booking->overal_price,
+//                            'start' => $booking->start,
+//                            'end' => $booking->end,
+//                            'color' => $booking->color,
+//                            'events' => $services,
+//                        ];
+//                    }
+//                }
+//            }
+//        }else{
+//            foreach ($bookings as $booking) {
+//                $services = Services::leftJoin('services_events', function ($join) {
+//                    $join->on('id', '=', 'id_service');
+//                })->where('id_event', '=', $booking->id)->get();
+//                $events[] = [
+//                    'id' => $booking->id,
+//                    'title' => $booking->title,
+//                    'name_c' => $booking->name_c,
+//                    'surname_c' => $booking->surname_c,
+//                    'name_w' => $booking->name_w,
+//                    'surname_w' => $booking->surname_w,
+//                    'overal_price' => $booking->overal_price,
+//                    'start' => $booking->start,
+//                    'end' => $booking->end,
+//                    'color' => $booking->color,
+//                    'events' => $services,
+//                ];
+//            }
+//        }
+
+
     public function index(Request $request)
     {
-        $events = array();
-        $bookings = Events::all();
-        $services = array();
-        if($request->values != null){
-            session()->put('values',$request->values);
-            foreach($bookings as $booking){
-                $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
-                foreach($request->values as $value)
-                    if($booking->worker_id == $value) {
-                        $events[] = [
-                            'id' => $booking->id,
-                            'title' => $booking->title,
-                            'name_c' => $booking->name_c,
-                            'surname_c' => $booking->surname_c,
-                            'name_w' => $booking->name_w,
-                            'surname_w' => $booking->surname_w,
-                            'overal_price' => $booking->overal_price,
-                            'start' => $booking->start,
-                            'end' => $booking->end,
-                            'color' => $booking->color,
-                            'events' => $services,
-                        ];
-                    }
-            }
-        }elseif(session('values') != null) {
-            foreach ($bookings as $booking) {
-                $services = Services::leftJoin('services_events', function ($join) {
-                    $join->on('id', '=', 'id_service');
-                })->where('id_event', '=', $booking->id)->get();
-                foreach (session('values') as $value){
-                    if ($booking->worker_id == $value) {
-                        $events[] = [
-                            'id' => $booking->id,
-                            'title' => $booking->title,
-                            'name_c' => $booking->name_c,
-                            'surname_c' => $booking->surname_c,
-                            'name_w' => $booking->name_w,
-                            'surname_w' => $booking->surname_w,
-                            'overal_price' => $booking->overal_price,
-                            'start' => $booking->start,
-                            'end' => $booking->end,
-                            'color' => $booking->color,
-                            'events' => $services,
-                        ];
-                    }
-                }
-            }
-        }else{
-            foreach ($bookings as $booking) {
-                $services = Services::leftJoin('services_events', function ($join) {
-                    $join->on('id', '=', 'id_service');
-                })->where('id_event', '=', $booking->id)->get();
-                $events[] = [
-                    'id' => $booking->id,
-                    'title' => $booking->title,
-                    'name_c' => $booking->name_c,
-                    'surname_c' => $booking->surname_c,
-                    'name_w' => $booking->name_w,
-                    'surname_w' => $booking->surname_w,
-                    'overal_price' => $booking->overal_price,
-                    'start' => $booking->start,
-                    'end' => $booking->end,
-                    'color' => $booking->color,
-                    'events' => $services,
-                ];
-            }
-        }
 
         return view('calendar/index',
          [
-         'events' => $events,
          'visit_sorting' => session('values'),
          'events_all' =>Events::all(),
          'clients' => Clients::all(),
@@ -117,20 +120,16 @@ class CalendarController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return JsonResponse
+     * @return Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
      */
     public function store(Request $request)
     {
 
         $record_client = Clients::findOrFail($request->client);
         $record_worker = Workers::findOrFail($request->worker);
+        $services_temp = implode(',', array_column($request->services, 'id'));
+        $services_array = explode(',', $services_temp);
 
-        $services = Services::findOrFail($request->services);
-
-
-
-//        return json_encode($services);
-////
        $event = Events::create([
             'title' => $record_client->last_name,
             'name_c' => $record_client->first_name,
@@ -141,7 +140,7 @@ class CalendarController extends Controller
             'surname_w' => $record_worker->last_name,
             'worker_id' => $record_worker->id,
             'worker_icon' => $record_worker->icon_photo,
-            'overal_price' => 0,
+            'overal_price' => $request->overall_price,
             'start' => $request->date_start,
             'end' => $request->date_end,
             'color' =>$record_worker->color,
@@ -149,16 +148,16 @@ class CalendarController extends Controller
 
 
 
-        foreach($services as $service){
+        foreach($services_array as $service){
              ServicesEvents::create([
-                'id_service' => $service->id,
+                'id_service' => $service,
                 'id_event' => $event->id,
                 'id_client' => $record_client->id,
                 'id_worker' => $record_worker->id,
             ]);
         }
 
-        return Redirect('calendar/index');
+        return $event;
 
     }
 
@@ -216,54 +215,81 @@ class CalendarController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @return JsonResponse
+     * @return \Illuminate\Database\Eloquent\Collection|JsonResponse
      */
     public function destroy(Request $request)
     {
-        $events = Events::find($request->event_id);
-        if(! $events){
+        $event = Events::find($request->event_id);
+        if(! $event){
             return response()->json([
                 'error'=>  "Nie znaleziono wizity"
             ], 404);
         }
-            $events->delete();
-            return $events;
-    }
+        $getEvents = Events::all();
+        $event->delete();
+        return $getEvents;
+}
 
-    public function status(Request $request){
+    public function getEvents()
+    {
         $events = array();
         $bookings = Events::all();
-        $services = array();
-//        return response()->json($request->values);
-        foreach($bookings as $booking){
+            foreach($bookings as $booking){
             $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
-            foreach($request->values as $value)
-            if($booking->worker_id == $value){
-                $events[] =[
+                $events[] = [
                     'id' => $booking->id,
                     'title' => $booking->title,
                     'name_c' => $booking->name_c,
                     'surname_c' => $booking->surname_c,
                     'name_w' => $booking->name_w,
                     'surname_w' => $booking->surname_w,
-                    'overal_price' => $booking -> overal_price,
+                    'overal_price' => $booking->overal_price,
                     'start' => $booking->start,
-                    'end' => $booking-> end,
-                    'color' => $booking-> color,
-                    'events' =>$services,
+                    'end' => $booking->end,
+                    'color' => $booking->color,
+                    'worker_id' =>$booking->worker_id,
+                    'worker_icon' =>$booking->worker_icon,
+                    'events' => $services,
                 ];
             }
-        }
-
-        return view('calendar/index',
-            [
-                'events' => $events,
-                'current_status' =>$request->values,
-                'events_all' =>Events::all(),
-                'clients' => Clients::all(),
-                'workers' => Workers::all(),
-                'services' => Services::all(),
-                'services_events' => ServicesEvents::all(),
-            ]);
+        return response()->json($events);
     }
+
+    //OLD FUNCTION TO FILTER WORKERS IN CALENDAR
+//    public function status(Request $request){
+//        $events = array();
+//        $bookings = Events::all();
+//        $services = array();
+////        return response()->json($request->values);
+//        foreach($bookings as $booking){
+//            $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
+//            foreach($request->values as $value)
+//            if($booking->worker_id == $value){
+//                $events[] =[
+//                    'id' => $booking->id,
+//                    'title' => $booking->title,
+//                    'name_c' => $booking->name_c,
+//                    'surname_c' => $booking->surname_c,
+//                    'name_w' => $booking->name_w,
+//                    'surname_w' => $booking->surname_w,
+//                    'overal_price' => $booking -> overal_price,
+//                    'start' => $booking->start,
+//                    'end' => $booking-> end,
+//                    'color' => $booking-> color,
+//                    'events' =>$services,
+//                ];
+//            }
+//        }
+//
+//        return view('calendar/index',
+//            [
+//                'events' => $events,
+//                'current_status' =>$request->values,
+//                'events_all' =>Events::all(),
+//                'clients' => Clients::all(),
+//                'workers' => Workers::all(),
+//                'services' => Services::all(),
+//                'services_events' => ServicesEvents::all(),
+//            ]);
+//    }
 }
