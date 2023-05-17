@@ -276,7 +276,7 @@
                         @csrf
                         <div>
                             <div class = "row">
-                                <div class="col-md-7">
+                                <div class="col-md-12">
                                     <div class="form-outline mb-3">
                                         <input type="text" id="service_name" name = "service_name" value = "{{$service->service_name}}"  class="form-control form-control" />
                                         <label class="form-label" for="service_name">Nazwa Usługi</label>
@@ -284,7 +284,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <div class="form-outline mb-3">
                                         <input type="number" id="price" name = "price" value = "{{$service->price}}" class="form-control form-control" />
                                         <label class="form-label" for="price">Cena</label>
@@ -294,6 +294,18 @@
                                 <div class="col-md-2">
                                     <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control form-control" />
                                 </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-outline mb-3">
+                                        <input type="number" id="time" name = "time" value = "{{$service->time}}" class="form-control form-control" />
+                                        <label class="form-label" for="price">Czas</label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <input disabled type="text" placeholder="min" id="time_min" name = "time_min"  class="form-control form-control" />
+                                </div>
+
 
                                 <div class="d-flex flex-column align-items-center text-center">
                                     <button type="submit" class="btn btn-success btn-rounded">

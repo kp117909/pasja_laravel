@@ -52,7 +52,9 @@ class AuthController extends Controller
         $data = $request->all();
         $check = $this->create($data);
 
-        // return response()->json($data);
+        if (!$check) {
+            return redirect("index")->withErrors('Podany login istnieje podaj inny login!')->withInput();
+        }
 
         return redirect("index")->withSuccess('Great! You have Successfully loggedin');
     }
