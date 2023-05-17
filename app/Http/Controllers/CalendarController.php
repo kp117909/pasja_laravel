@@ -185,6 +185,9 @@ class CalendarController extends Controller
             [
                 'name_w' => $record_worker->first_name,
                 'surname_w' =>$record_worker->last_name,
+                'worker_id' =>$record_worker->id,
+                'worker_icon' =>$record_worker->icon_photo,
+                'color' => $record_worker->color,
                 'start' =>$request->start,
                 'end'=>$request->end
             ]

@@ -206,6 +206,12 @@ input[type="datetime-local"] {
   overflow: hidden;
   font-weight: bold!important;
 }
+.fc-time-grid-event .fc-title:before {
+    white-space: normal;
+    overflow: hidden;
+    font-weight: bold!important;
+    content: "👉 "
+}
 
 .form-control:focus {
     box-shadow: none;

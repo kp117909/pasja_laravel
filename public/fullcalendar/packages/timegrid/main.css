@@ -200,12 +200,19 @@ be a descendant of the grid when it is being dragged.
 
 .fc-time-grid-event .fc-time,
 .fc-time-grid-event .fc-title {
-  padding: 0 1px;
+  padding: 0 3px;
 }
 
 .fc-time-grid-event .fc-time {
-  font-size: 0.85em;
-  white-space: nowrap;
+    background-color: #707987;
+    font-size: 1.0em;
+    white-space: nowrap;
+    border-left: 0.3rem solid #ed0505;
+    border-radius: 5px;
+}
+
+.fc-time-grid-event .fc-time:after {
+   content : " 📌";
 }
 
 /* short mode, where time and title are on the same line */

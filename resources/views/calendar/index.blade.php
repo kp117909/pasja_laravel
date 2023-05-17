@@ -61,10 +61,18 @@
                   $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
                   calculateTime();
               },
-              eventRender: function (event, el , view) {
-                  var eventPath = event.event
-                  // console.log(event)
-                  // event.el.popover({
+
+
+              eventRender: function (event) {
+                  const eventPath = event.event;
+
+                  var start = moment(eventPath.start).format("HH:mm")
+                  var end = moment(eventPath.end).format("HH:mm")
+                  //
+                  // event.el.querySelector('.fc-time').innerHTML  = start + '-' + end;
+                  event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
+
+                  // $el.popover({
                   //     title:    '<div class="popoverTitleCalendar" style="background-color:'+ eventPath.backgroundColor +'; color:white;'+ eventPath.title +'</div>',
                   //     content:  '<div class="popoverInfoCalendar">' +
                   //         '<p><strong>Dane Pracownika:</strong> ' + eventPath.extendedProps.name_w + ' ' + eventPath.extendedProps.surname_w + '</p>' +
@@ -76,9 +84,9 @@
                   //         hide: "50"
                   //     },
                   //     trigger: 'hover',
-                  //     // placement: 'top',
-                  //     // html: true,
-                  //     // container: 'body'
+                  //     placement: 'top',
+                  //     html: true,
+                  //     container: 'body'
                   // });
 
                   var username = $('input:checkbox.filter:checked').map(function() {
@@ -187,9 +195,9 @@
                               title: 'Edytuj Wizytę Klienta: <br> ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c,
                               html:
                                   '<label for="input_worker">Zmień Pracownika</label>' +
-                                  ' <select class="form-control form-control-sm">>' +
+                                  ' <select id = "worker_id_edit" class="form-control form-control-sm">>' +
                                   @foreach($workers as $worker)
-                                      '<option id = "worker_id_edit" value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
+                                      '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
                                   @endforeach
                                       '</select>' +
                                   '<form class="container">' +
@@ -205,12 +213,12 @@
                                   '   </div>' +
                                   '   <div class="col-md-2"></div>' +
                                   '   <div class = "row">' +
-                                  '       <div class="col-md-6 mb-4">' +
+                                  '       <div class="col-md-6 mb-1">' +
                                   '           <div class="datetimepicker">' +
                                   '               <input type="datetime-local" style="font-size:1rem;" value = "' + start_date + '" id="date_start_edit" name="date_start_edit" class="form-control" />' +
                                   '           </div>' +
                                   '       </div>' +
-                                  '       <div class="col-md-6 mb-4">' +
+                                  '       <div class="col-md-6 mb-1">' +
                                   '           <div class="datetimepicker">' +
                                   '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "' + end_date + '" name="date_end_edit" class="form-control"/>' +
                                   '           </div>' +
@@ -226,7 +234,7 @@
                                   var start_date = document.getElementById('date_start_edit').value;
                                   var end_date = document.getElementById('date_end_edit').value;
                                   var worker_id = document.querySelector('#worker_id_edit').value;
-
+                                  console.log(worker_id)
                                   $.ajax({
                                       url: "{{ route('calendar.edit') }}",
                                       type: "GET",
