@@ -9,6 +9,7 @@
   href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css"
   rel="stylesheet"
 />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
@@ -47,13 +48,20 @@
                   @if ($errors->has('password'))
                     <span class="text-danger">Podaj hasło</span>
                   @endif
-
-                  <div class="form-outline mb-4">
-                    <input type="password" id="password" name = "password"  class="form-control form-control-lg" />
-                    <label class="form-label" for="password">Hasło</label>
-                  </div>
-
-
+                    <div class = "row">
+                        <div class="col-md-10">
+                            <div class="form-outline mb-4">
+                                <input type="password" id="password" name = "password"  class="form-control form-control-lg" />
+                                <label class="form-label" for="password">Hasło</label>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class = "btn btn-dark" type = "button" onclick="password_show_hide();">
+                                <i class="fas fa-eye" id="show_eye"></i>
+                                <i class="fas fa-eye-slash" id="hide_eye"></i>
+                            </button>
+                        </div>
+                    </div>
                   <div class="pt-1 mb-4">
                     <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
                   </div>
@@ -77,6 +85,26 @@
     </div>
   </div>
 </section>
+<script>
+    $(document).ready(function() {
+        $('#show_eye').hide();
+    });
+    function password_show_hide() {
+        var x = document.getElementById("password");
+        var xy = document.getElementById("re_password");
+        if (x.type === "password") {
+            x.type = "text";
+            xy.type = 'text';
+            $('#show_eye').show();
+            $('#hide_eye').hide();
+        } else {
+            x.type = "password";
+            xy.type = 'password';
+            $('#show_eye').hide();
+            $('#hide_eye').show();
+        }
+    }
+</script>
 <script src = "{{url('js/javascript.js')}}"></script>
 
 </body>

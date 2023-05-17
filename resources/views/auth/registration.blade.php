@@ -8,9 +8,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet"/>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 <body>
-<section class="vh-100" style="background-image: url('png/tlo_pasja.jpeg') ;">
+<section class="vh-100" style="background-image: url('png/tlo_pasja.jpeg');
+    background-size: cover; background-repeat: no-repeat;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col col-xl-10">
@@ -34,83 +36,78 @@
 
                   <div class="row">
                     <div class="col-md-4 mb-2 pb-2">
-                        @if ($errors->has('first_name'))
-                          <span class="text-danger">Podaj imię</span>
-                        @endif
                       <div class="form-outline">
-                        <input type="text" id="first_name" name = "first_name"  class="form-control form-control-lg" />
+                        <input type="text" id="first_name" name = "first_name" value="{{ old('first_name') }}" oninvalid="this.setCustomValidity('Wprowadź imię')"  oninput="setCustomValidity('')"  class="form-control form-control-lg" required/>
                         <label class="form-label" for="first_name">Imię</label>
                       </div>
 
                     </div>
                     <div class="col-md-4 mb-2 pb-2">
-                        @if ($errors->has('last_name'))
-                          <span class="text-danger">Podaj nazwisko</span>
-                        @endif
                       <div class="form-outline">
-                        <input type="text" id="last_name" name = "last_name" class="form-control form-control-lg" />
+                        <input type="text" id="last_name" name = "last_name" value="{{ old('last_name') }}" oninvalid="this.setCustomValidity('Wprowadź nazwisko')"  oninput="setCustomValidity('')" class="form-control form-control-lg" required/>
                         <label class="form-label" for="last_name">Nazwisko</label>
                       </div>
 
                     </div>
 
                     <div class="col-md-4 mb-2 pb-2">
-                        @if ($errors->has('phone'))
-                            <span class="text-danger">Podaj Nr telefonu</span>
-                        @endif
                         <div class="form-outline">
-                          <input type="phone" id="phone" name = "phone" class="form-control form-control-lg" />
+                          <input type="phone" maxlength="11" id="phone" value="{{ old('phone') }}" name = "phone" oninvalid="this.setCustomValidity('Wprowadź numer')"  oninput="setCustomValidity('')" onkeydown="phoneNumberFormat()"  class="form-control form-control-lg" required/>
                         <label class="form-label" for="phone">Nr telefonu</label>
                       </div>
                     </div>
 
                   </div>
-                  @if ($errors->has('login'))
-                        <span class="text-danger">Podaj login</span>
-                    @endif
                   <div class="form-outline mb-2">
-                    <input type="login" id="login" name = "login" class="form-control form-control-lg" />
+                    <input type="login" id="login" name = "login" value="{{ old('login') }}" oninvalid="this.setCustomValidity('Wprowadź login')"  oninput="setCustomValidity('')" class="form-control form-control-lg" required/>
                     <label class="form-label" for="login">Login</label>
                   </div>
 
                   <div class="row">
-                    <div class="col-md-6 mb-4 pb-2">
-                      @if ($errors->has('password'))
-                        <span class="text-danger">Podaj hasło</span>
-                      @endif
-                      <div class="form-outline">
-                        <input type="password" id="password" name = "password" class="form-control form-control-lg" />
-                        <label class="form-label" for="password">Hasło</label>
-                      </div>
-
+                    <div class="col-md-5 mb-4 pb-2">
+                          <div class="form-outline">
+                              <input type="password" minlength="6" id="password" name = "password" value="{{ old('password') }}" oninvalid="this.setCustomValidity('Wprowadź hasło 6 znaków')"  oninput="setCustomValidity('')" class="form-control form-control-lg" required/>
+                              <label class="form-label" for="password">Hasło</label>
+                          </div>
                     </div>
-                    <div class="col-md-6 mb-4 pb-2">
-                      @if ($errors->has('re_password'))
-                        <span class="text-danger">Powtórz hasło</span>
-                      @endif
+                    <div class="col-md-5 mb-4 pb-2">
                       <div class="form-outline">
-                        <input type="password" id="re_password" name = "re_password" class="form-control form-control-lg" />
+                        <input type="password" id="re_password" name = "re_password" value="{{ old('re_password') }}" oninvalid="this.setCustomValidity('Powtórz hasło')"  oninput="setCustomValidity('')" class="form-control form-control-lg" required/>
                         <label class="form-label" for="re_password">Powtórz hasło</label>
-
                       </div>
-
                     </div>
+                      <div class="col-md-2 mb-4 pb-2">
+                            <button class = "btn btn-dark" type = "button" onclick="password_show_hide();">
+                              <i class="fas fa-eye" id="show_eye"></i>
+                              <i class="fas fa-eye-slash" id="hide_eye"></i>
+                            </button>
+                      </div>
                   </div>
 
+
+                @if($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                   <div class="pt-1 mb-4">
                     <button class="btn btn-dark btn-lg btn-block" type="submit">Stwórz</button>
                   </div>
 
                   <div class="form-check d-flex justify-content-start mb-2 pb-3">
-                    <input class="form-check-input me-3" type="checkbox" value="" id="terms" />
+                    <input class="form-check-input me-3" type="checkbox" value="" oninvalid="this.setCustomValidity('Zaakceptuj regulamin.')" oninput="setCustomValidity('')" id="terms" required/>
                     <label class="form-check-label" for="terms">
                       Akcpetuje <a href="#!" style="color: #393f81;"><u>Regulamin i zasady</u></a> strony HairLink.
                     </label>
                   </div>
 
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->
-                  <p class="mb-2 pb-lg-2" style="color: #393f81;"> Posiadasz konto? <a href="{{route('login')}}"
+                  <p class="mb-2 pb-lg-2""> Posiadasz konto? <a href="{{route('login')}}"
                       style="color: #393f81;">Zaloguj się tutaj!</a></p>
                   <a href="#!" class="small text-muted">Warunki koszytania.</a>
                   <a href="#!" class="small text-muted">Polityka prywatności</a>
@@ -124,6 +121,26 @@
     </div>
   </div>
 </section>
+<script>
+    $(document).ready(function() {
+        $('#show_eye').hide();
+    });
+    function password_show_hide() {
+        var x = document.getElementById("password");
+        var xy = document.getElementById("re_password");
+        if (x.type === "password") {
+            x.type = "text";
+            xy.type = 'text';
+            $('#show_eye').show();
+            $('#hide_eye').hide();
+        } else {
+            x.type = "password";
+            xy.type = 'password';
+            $('#show_eye').hide();
+            $('#hide_eye').show();
+        }
+    }
+</script>
 <script src = "{{url('js/javascript.js')}}"></script>
 </body>
 </html>

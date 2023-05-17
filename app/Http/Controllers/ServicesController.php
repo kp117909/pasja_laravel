@@ -81,6 +81,7 @@ class ServicesController extends Controller
 
         $service->service_name = $request->service_name;
         $service->price = $request->price;
+        $service->time = $request->time;
 
         $service-> save();
         return Redirect('client.profile');
