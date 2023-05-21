@@ -5,6 +5,7 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServicesController;
+use App\Http\Controllers\WorkerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -80,6 +81,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('calendar.update', [CalendarController::class, 'update'])->name('calendar.update');
 
     Route::get('calendar.edit', [CalendarController::class, 'edit'])->name('calendar.edit');
+
+    //Workers
+    Route::get('worker.saveAvailability', [WorkerController::class, 'saveAvailability'])->name('worker.saveAvailability');
+
 
 //    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
 
