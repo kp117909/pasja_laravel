@@ -30,12 +30,23 @@
 
   <script>
 
+      function showLoadingMessage() {
+
+          Swal.fire({
+              title: "HairLink <i class='fa-solid fa-spinner fa-spin-pulse'></i>",
+              text: "Ładowanie danych",
+              showConfirmButton: false
+          }).then((result) => {
+              calendar.refetchEvents();
+          });
+      }
+
       $.ajaxSetup({
           headers: {
               'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           }
       });
-
+      showLoadingMessage();
       // document.addEventListener('DOMContentLoaded', function() {
           var calendarEl = document.getElementById('calendar');
           var initialView = 'timeGridWeek';
@@ -55,39 +66,21 @@
               selectable: true,
               editable: true,
               select: async function (start, end, allDay) {
-                  resetSelects();
-                  $('#modalAddVisit').modal('show');
-                  $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDTHH:mm"))
-                  $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
-                  calculateTime();
+                  @if(auth()->user()->is_admin)
+                    showOptionsAdmin(start.startStr, start.endStr, start.start.getDay());
+                  @else
+                      resetSelects();
+                      $('#modalAddVisit').modal('show');
+                      $('#modalAddVisit #date_start').attr('value', moment(start.startStr).format("YYYY-MM-DDTHH:mm"))
+                      $('#modalAddVisit #date_end').attr('value', moment(start.endStr).format("YYYY-MM-DDTHH:mm"))
+                      calculateTime();
+                  @endif
               },
-
 
               eventRender: function (event) {
                   const eventPath = event.event;
 
-                  var start = moment(eventPath.start).format("HH:mm")
-                  var end = moment(eventPath.end).format("HH:mm")
-                  //
-                  // event.el.querySelector('.fc-time').innerHTML  = start + '-' + end;
                   event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
-
-                  // $el.popover({
-                  //     title:    '<div class="popoverTitleCalendar" style="background-color:'+ eventPath.backgroundColor +'; color:white;'+ eventPath.title +'</div>',
-                  //     content:  '<div class="popoverInfoCalendar">' +
-                  //         '<p><strong>Dane Pracownika:</strong> ' + eventPath.extendedProps.name_w + ' ' + eventPath.extendedProps.surname_w + '</p>' +
-                  //         '<p><strong>Dane Klienta:</strong> ' + eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c + '</p>' +
-                  //         '<div class="popoverDescCalendar"><strong>Description:</strong> LORE IPSUM </div>' +
-                  //         '</div>',
-                  //     delay: {
-                  //         show: "800",
-                  //         hide: "50"
-                  //     },
-                  //     trigger: 'hover',
-                  //     placement: 'top',
-                  //     html: true,
-                  //     container: 'body'
-                  // });
 
                   var username = $('input:checkbox.filter:checked').map(function() {
                       return $(this).val();
@@ -95,10 +88,18 @@
                   var getIndex = eventPath.extendedProps.surname_w + "_" + eventPath.extendedProps.worker_id;
                   show_username = username.indexOf(getIndex) >= 0;
 
-                  return show_username
+                  if (show_username) {
+                      hideLoadingMessage();
+                      return true;
+                  } else {
+                      hideLoadingMessage();
+                      return false; //
+                  }
+                  // return show_username
               },
 
               eventResize: function (event) {
+                  @if(auth()->user()->is_admin)
                   $.ajax({
                       url: "{{ route('calendar.update')}}",
                       type: "GET",
@@ -113,17 +114,29 @@
                               title: "Czas wizyty edytowany pomyślnie!",
                               text: "HairLink",
                               icon: "success",
-                              showConfirmButton: true
+                              showConfirmButton: false
                           }).then((result) => {
                               calendar.refetchEvents();
                           });
+                          calendar.refetchEvents();
                       },
                       error: function (error) {
                           console.log(error)
                       },
                   });
+                  @else
+                      Swal.fire({
+                          title: "Edycja niedostępna!",
+                          text: "Jeżeli chcesz zmienić date skontaktuj się z pracownikiem",
+                          icon: "warning",
+                          showConfirmButton: true
+                      }).then((result) => {
+                          calendar.refetchEvents();
+                      });
+                  @endif
               },
               eventDrop: function (event) {
+                  @if(auth()->user()->is_admin)
                   var id = event.event.id;
                   var start_date = moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss")
                   var end_date = moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")
@@ -137,15 +150,26 @@
                               title: "Czas wizyty edytowany pomyślnie!",
                               text: "HairLink",
                               icon: "success",
-                              showConfirmButton: true
+                              showConfirmButton: false
                           }).then((result) => {
                               calendar.refetchEvents();
                           });
+                          calendar.refetchEvents();
                       },
                       error: function (error) {
                           console.log(error)
                       },
                   });
+                  @else
+                      Swal.fire({
+                          title: "Edycja niedostępna!",
+                          text: "Jeżeli chcesz zmienić date skontaktuj się z pracownikiem",
+                          icon: "warning",
+                          showConfirmButton: true
+                      }).then((result) => {
+                          calendar.refetchEvents();
+                      });
+                  @endif
               },
               eventClick: function (info) {
                   var client_services = info.event.extendedProps.events;
@@ -154,126 +178,138 @@
                       services_list = services_list + "<li class='list-group-item'>" + e.service_name + "</li>";
                   });
                   info.el.style.borderColor = 'black';
-                  Swal.fire({
-                      title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
-                      icon: 'info',
-                      html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
-                          '<ul class="list-group">' + services_list + '</ul>',
-                      showCloseButton: true,
-                      showCancelButton: true,
-                      showDenyButton: true,
-                      cancelButtonText: 'Wyjdź',
-                      confirmButtonText: 'Usuń',
-                      denyButtonText: 'Edytuj',
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          // Delete event
-                          $.ajax({
-                              url: "{{ route('calendar.delete') }}",
-                              type: "GET",
-                              dataType: 'json',
-                              data: {event_id: info.event.id},
-                              success: function (response) {
-                                  Swal.fire({
-                                      title: "Wizyta usunięta pomyślnie!",
-                                      text: "HairLink",
-                                      icon: "success",
-                                      showConfirmButton: true
-                                  }).then((result) => {
-                                      calendar.refetchEvents();
-                                  });
-                                  calendar.refetchEvents();
-                              },
-                              error: function (error) {
-                                  Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
-                              },
-                          })
-                      } else if (result.isDenied) {
-                          var start_date = moment(info.event.start).format("YYYY-MM-DDTHH:mm:ss")
-                          var end_date = moment(info.event.end).format("YYYY-MM-DDTHH:mm:ss")
-                          Swal.fire({
-                              title: 'Edytuj Wizytę Klienta: <br> ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c,
-                              html:
-                                  '<label for="input_worker">Zmień Pracownika</label>' +
-                                  ' <select id = "worker_id_edit" class="form-control form-control-sm">>' +
-                                  @foreach($workers as $worker)
-                                      '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
-                                  @endforeach
-                                      '</select>' +
-                                  '<form class="container">' +
-                                  '<button type = "button" data-toggle="tooltip" data-placement="top" title="Czas usługi można zmieniać również poprzez przeciąganie w kalendarzu" >Czas Usługi</button>' +
-                                  '<div class = "row">' +
-                                  '   <div class="col-md-1"></div>' +
-                                  '   <div class="col-md-4">' +
-                                  '       <h4>Poczatęk</h4>' +
-                                  '   </div>' +
-                                  '   <div class="col-md-2"></div>' +
-                                  '   <div class="col-md-3">' +
-                                  '       <h4>Koniec</h4>' +
-                                  '   </div>' +
-                                  '   <div class="col-md-2"></div>' +
-                                  '   <div class = "row">' +
-                                  '       <div class="col-md-6 mb-1">' +
-                                  '           <div class="datetimepicker">' +
-                                  '               <input type="datetime-local" style="font-size:1rem;" value = "' + start_date + '" id="date_start_edit" name="date_start_edit" class="form-control" />' +
-                                  '           </div>' +
-                                  '       </div>' +
-                                  '       <div class="col-md-6 mb-1">' +
-                                  '           <div class="datetimepicker">' +
-                                  '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "' + end_date + '" name="date_end_edit" class="form-control"/>' +
-                                  '           </div>' +
-                                  '       </div>' +
-                                  '   </div>',
-                              focusConfirm: false,
-                              showConfirmButton: true,
-                              showCancelButton: true,
-                              cancelButtonText: 'Wyjdź',
-                              confirmButtonText: 'Zapisz',
-                          }).then((result) => {
-                              if (result.value) {
-                                  var start_date = document.getElementById('date_start_edit').value;
-                                  var end_date = document.getElementById('date_end_edit').value;
-                                  var worker_id = document.querySelector('#worker_id_edit').value;
-                                  console.log(worker_id)
-                                  $.ajax({
-                                      url: "{{ route('calendar.edit') }}",
-                                      type: "GET",
-                                      dataType: 'json',
-                                      data: {
-                                          event_id: info.event.id,
-                                          start: moment(start_date).format("YYYY-MM-DDTHH:mm:ss"),
-                                          end: moment(end_date).format("YYYY-MM-DDTHH:mm:ss"),
-                                          w_id: worker_id
-                                      },
-                                      success: function (response) {
-                                          Swal.fire({
-                                              title: "Wizyta edytowana pomyślnie!",
-                                              text: "HairLink",
-                                              icon: "success",
-                                              showConfirmButton: true,
-                                          }).then((result) => {
-                                              calendar.refetchEvents();
-                                          });
+                  @if(auth()->user()->is_admin)
+                      Swal.fire({
+                          title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
+                          icon: 'info',
+                          html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
+                              '<ul class="list-group">' + services_list + '</ul>',
+                          showCloseButton: true,
+                          showCancelButton: true,
+                          showDenyButton: true,
+                          cancelButtonText: 'Wyjdź',
+                          confirmButtonText: 'Usuń',
+                          denyButtonText: 'Edytuj',
+                      }).then((result) => {
+                          if (result.isConfirmed) {
+                              // Delete event
+                              $.ajax({
+                                  url: "{{ route('calendar.delete') }}",
+                                  type: "GET",
+                                  dataType: 'json',
+                                  data: {event_id: info.event.id},
+                                  success: function (response) {
+                                      Swal.fire({
+                                          title: "Wizyta usunięta pomyślnie!",
+                                          text: "HairLink",
+                                          icon: "success",
+                                          showConfirmButton: false
+                                      }).then((result) => {
                                           calendar.refetchEvents();
-                                      },
-                                      error: function (error) {
-                                          Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
-                                      },
-                                  })
-                              }
-                          });
-                      } else {
-                          Swal.close();
-                      }
-                  });
+                                      });
+                                      calendar.refetchEvents();
+                                  },
+                                  error: function (error) {
+                                      Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
+                                  },
+                              })
+                          } else if (result.isDenied) {
+                              var start_date = moment(info.event.start).format("YYYY-MM-DDTHH:mm:ss")
+                              var end_date = moment(info.event.end).format("YYYY-MM-DDTHH:mm:ss")
+                              Swal.fire({
+                                  title: 'Edytuj Wizytę Klienta: <br> ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c,
+                                  html:
+                                      '<label for="input_worker">Zmień Pracownika</label>' +
+                                      ' <select id = "worker_id_edit" class="form-control form-control-sm">>' +
+                                      @foreach($workers as $worker)
+                                          '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
+                                      @endforeach
+                                          '</select>' +
+                                      '<form class="container">' +
+                                      '<button type = "button" data-toggle="tooltip" data-placement="top" title="Czas usługi można zmieniać również poprzez przeciąganie w kalendarzu" >Czas Usługi</button>' +
+                                      '<div class = "row">' +
+                                      '   <div class="col-md-1"></div>' +
+                                      '   <div class="col-md-4">' +
+                                      '       <h4>Poczatęk</h4>' +
+                                      '   </div>' +
+                                      '   <div class="col-md-2"></div>' +
+                                      '   <div class="col-md-3">' +
+                                      '       <h4>Koniec</h4>' +
+                                      '   </div>' +
+                                      '   <div class="col-md-2"></div>' +
+                                      '   <div class = "row">' +
+                                      '       <div class="col-md-6 mb-1">' +
+                                      '           <div class="datetimepicker">' +
+                                      '               <input type="datetime-local" style="font-size:1rem;" value = "' + start_date + '" id="date_start_edit" name="date_start_edit" class="form-control" />' +
+                                      '           </div>' +
+                                      '       </div>' +
+                                      '       <div class="col-md-6 mb-1">' +
+                                      '           <div class="datetimepicker">' +
+                                      '               <input type="datetime-local" style="font-size:1rem;" id="date_end_edit" value = "' + end_date + '" name="date_end_edit" class="form-control"/>' +
+                                      '           </div>' +
+                                      '       </div>' +
+                                      '   </div>',
+                                  focusConfirm: false,
+                                  showConfirmButton: true,
+                                  showCancelButton: true,
+                                  cancelButtonText: 'Wyjdź',
+                                  confirmButtonText: 'Zapisz',
+                              }).then((result) => {
+                                  if (result.value) {
+                                      var start_date = document.getElementById('date_start_edit').value;
+                                      var end_date = document.getElementById('date_end_edit').value;
+                                      var worker_id = document.querySelector('#worker_id_edit').value;
+                                      $.ajax({
+                                          url: "{{ route('calendar.edit') }}",
+                                          type: "GET",
+                                          dataType: 'json',
+                                          data: {
+                                              event_id: info.event.id,
+                                              start: moment(start_date).format("YYYY-MM-DDTHH:mm:ss"),
+                                              end: moment(end_date).format("YYYY-MM-DDTHH:mm:ss"),
+                                              w_id: worker_id
+                                          },
+                                          success: function (response) {
+                                              Swal.fire({
+                                                  title: "Wizyta edytowana pomyślnie!",
+                                                  text: "HairLink",
+                                                  icon: "success",
+                                                  showConfirmButton: false,
+                                              }).then((result) => {
+                                                  calendar.refetchEvents();
+                                              });
+                                              calendar.refetchEvents();
+                                          },
+                                          error: function (error) {
+                                              Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
+                                          },
+                                      })
+                                  }
+                              });
+                          } else {
+                              Swal.close();
+                          }
+                      });
+              @else
+              Swal.fire({
+                  title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
+                  icon: 'info',
+                  html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
+                      '<ul class="list-group">' + services_list + '</ul>',
+                  showCloseButton: false,
+                  showCancelButton: false,
+                  showDenyButton: false,
+              }).then((result) =>{
+              });
+              @endif
               }
-
           });
           calendar.render();
           calendar.changeView(initialView);
 
 
       $('.filter').on('change', function() {
+          showLoadingMessage();
           calendar.refetchEvents();
       });
 
@@ -282,6 +318,54 @@
     <script>
 
         function addVisitCalendar(){
+            @if(auth()->user()->is_admin)
+                var selectedServices = [];
+                $("#select_services option:selected").each(function() {
+                    var service = {
+                        id: $(this).val(),
+                        name: $(this).text(),
+                        price: $(this).data('price'),
+                        time: $(this).data('time')
+                    };
+                    selectedServices.push(service);
+                });
+                $.ajax({
+                    url:"{{ route('calendar.store') }}",
+                    type:"GET",
+                    dataType:'json',
+                    data:{
+                        client:document.getElementById("select_client").value,
+                        worker : document.getElementById("select_worker").value,
+                        services: selectedServices,
+                        overall_price: document.getElementById("overall_price").value,
+                        date_start : moment(document.getElementById("date_start").value).format("YYYY-MM-DDTHH:mm:ss"),
+                        date_end: moment(document.getElementById("date_end").value).format("YYYY-MM-DDTHH:mm:ss")
+                    },
+                    success:function(response)
+                    {
+                        Swal.fire({
+                            title: "Wizyta dodana pomyślnie!",
+                            text: "HairLink",
+                            icon: "success",
+                            showConfirmButton: false,
+                        }).then((result) =>{
+                            calendar.refetchEvents();
+                            hideModal();
+                        });
+                        calendar.refetchEvents();
+                    },
+                    error:function(error)
+                    {
+                        console.log(error)
+                        Swal.fire('Nie udało sie dodać wizyty!', '', 'error');
+                    },
+                })
+            @else
+            addVisitCalendarClient()
+            @endif
+        }
+
+        function addVisitCalendarClient(){
             var selectedServices = [];
             $("#select_services option:selected").each(function() {
                 var service = {
@@ -297,7 +381,7 @@
                 type:"GET",
                 dataType:'json',
                 data:{
-                    client:document.getElementById("select_client").value,
+                    client: {{auth()->user()->id}},
                     worker : document.getElementById("select_worker").value,
                     services: selectedServices,
                     overall_price: document.getElementById("overall_price").value,
@@ -310,7 +394,7 @@
                         title: "Wizyta dodana pomyślnie!",
                         text: "HairLink",
                         icon: "success",
-                        showConfirmButton: true,
+                        showConfirmButton: false,
                     }).then((result) =>{
                         calendar.refetchEvents();
                         hideModal();
@@ -336,12 +420,14 @@
               <div id="modalBody" class="modal-body">
                   <form onsubmit="addVisitCalendar();return false">
                       @csrf
-                  <label for="select_client">Wybierz Klienta z listy</label>
-                  <select id ="select_client" data-max-options="1" name = "client" title='Wybierz Klienta z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Klienta')" multiple required>
-                      @foreach ($clients as $client)
-                          <option id = "client" value = "{{ $client->id }}">{{ $client->first_name }}  {{ $client->last_name }} </option>
-                      @endforeach
-                  </select>
+                      @if(auth()->user()->is_admin)
+                          <label for="select_client">Wybierz Klienta z listy</label>
+                          <select id ="select_client" data-max-options="1" name = "client" title='Wybierz Klienta z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Klienta')" multiple required>
+                              @foreach ($clients as $client)
+                                  <option id = "client" value = "{{ $client->id }}">{{ $client->first_name }}  {{ $client->last_name }} </option>
+                              @endforeach
+                          </select>
+                      @endif
                   <label for="select_worker">Wybierz Pracownika</label>
                   <select id ="select_worker" data-max-options="1" name = "worker" title='Wybierz Pracownika z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Pracownika')" multiple required>
                       @foreach($workers as $worker)
@@ -369,12 +455,20 @@
                       <div class="col-md-1 mb-4"></div>
                       <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              <input type="datetime-local" id="date_start" name="date_start" class="form-control" />
+                              @if(auth()->user()->is_admin)
+                                  <input type="datetime-local" id="date_start" name="date_start" class="form-control" />
+                              @else
+                                <input type="datetime-local" id="date_start" name="date_start" class="form-control" disabled/>
+                              @endif
                           </div>
                       </div>
                       <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              <input type="datetime-local" id="date_end" name="date_end" class="form-control"/>
+                              @if(auth()->user()->is_admin)
+                                 <input type="datetime-local" id="date_end" name="date_end" class="form-control"/>
+                              @else
+                                 <input type="datetime-local" id="date_end" name="date_end" class="form-control" disabled/>
+                              @endif
                           </div>
                       </div>
                       <div class="col-md-1 mb-4"></div>
@@ -383,7 +477,11 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text">Kwota Końcowa:</span>
                           </div>
-                      <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena">
+                      @if(auth()->user()->is_admin)
+                          <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena">
+                      @else
+                          <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena" disabled>
+                      @endif
                       <div class="input-group-append">
                           <span class="input-group-text">zł</span>
                           </div>
@@ -406,6 +504,84 @@
   </div>
 
     <script>
+        function showOptionsAdmin(start, end, day) {
+            var start_temp = moment(start).format("HH:mm")
+            var end_temp = moment(end).format("HH:mm")
+            var day_string = "";
+            if(day === 0){ day_string = "Niedzielę"}else if(day === 1){day_string = "Poniedziałek"}else if(day === 2){day_string = "Wtorek"}else if(day === 3){day_string = "Środe"}else if(day === 4){day_string = "Czwartek"}else if(day === 5){day_string = "Piątek"}else if(day === 6){day_string = "Sobote"}
+            Swal.fire({
+                title: 'HairLink Menu Kalendarza',
+                icon: 'info',
+                showCloseButton: true,
+                showCancelButton: true,
+                showDenyButton: true,
+                confirmButtonText: 'Zmień dyspozycyjność',
+                denyButtonText: 'Dodaj wizytę',
+                cancelButtonText: 'Wyjdź',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'HairLink Dyspozycyjność',
+                        text: "Czy chcesz zmienić swoją dyspozycyjność w " + day_string + " na godzinę od " + start_temp + " do " + end_temp +" ?",
+                        icon: 'info',
+                        showCloseButton: true,
+                        showCancelButton: true,
+                        showDenyButton: true,
+                        confirmButtonText: 'Aktualizuj',
+                        denyButtonText: 'Cofnij',
+                        cancelButtonText: 'Wyjdź',
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            saveAvailability(start_temp, end_temp, day, day_string);
+                        }else if (result.isDenied){
+                            showOptionsAdmin(start, end, day)
+                        }
+                    });
+                }else if (result.isDenied){
+                    resetSelects();
+                    $('#modalAddVisit').modal('show');
+                    $('#modalAddVisit #date_start').attr('value', moment(start).format("YYYY-MM-DDTHH:mm"))
+                    $('#modalAddVisit #date_end').attr('value', moment(end).format("YYYY-MM-DDTHH:mm"))
+                    calculateTime();
+                }
+            });
+        }
+
+        function saveAvailability(startTime, endTime, day, dayString) {
+            $.ajax({
+                url:"{{ route('worker.saveAvailability') }}",
+                type:"GET",
+                dataType:'json',
+                data:{
+                    start_time: startTime,
+                    end_time: endTime,
+                    day: day
+                },
+                success:function(response)
+                {
+                    console.log(response)
+                    Swal.fire({
+                        title: "Dyspozycyjność zaktualizowana!",
+                        text: "Od teraz twoje godziny pracy w " + dayString + " to " + startTime + "-"  + endTime ,
+                        icon: "success",
+                        showConfirmButton: false,
+                    }).then((result) =>{
+                        // console.log(result)
+                    });
+                },
+                error:function(error)
+                {
+                    // console.log(error)
+                    Swal.fire('Nie udało sie dodać wizyty!', '', 'error');
+                },
+            })
+
+
+        }
+
+        function hideLoadingMessage() {
+            Swal.close()
+        }
         function hideModal(){
             $('#modalAddVisit').modal('hide');
         }

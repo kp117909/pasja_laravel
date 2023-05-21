@@ -236,7 +236,11 @@ class CalendarController extends Controller
     public function getEvents()
     {
         $events = array();
-        $bookings = Events::all();
+        if (auth()->user()->is_admin) {
+            $bookings = Events::all();
+        }else{
+            $bookings = Events::where('client_id' , '=' , auth()->user()->id)->get();
+        }
             foreach($bookings as $booking){
             $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
                 $events[] = [

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Workers extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'accessibility' => 'array',
+    ];
 }
