@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Clients;
+use App\Models\Users;
 use App\Models\Services;
 use App\Models\Events;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +72,7 @@ class ClientController extends Controller
      */
     public function update(Request $request)
     {
-        $client = Clients::findOrFail($request->id_client);
+        $client = Users::findOrFail($request->id_client);
 
         $client->first_name = $request->first_name;
         $client->last_name = $request->last_name;

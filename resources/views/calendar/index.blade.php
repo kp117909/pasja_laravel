@@ -93,7 +93,7 @@
                       return true;
                   } else {
                       hideLoadingMessage();
-                      return false; //
+                      return false;
                   }
                   // return show_username
               },

@@ -7,7 +7,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Events;
-use App\Models\Clients;
+use App\Models\Users;
 use App\Models\Workers;
 use App\Models\Services;
 use App\Models\ServicesEvents;
@@ -98,7 +98,7 @@ class CalendarController extends Controller
          [
          'visit_sorting' => session('values'),
          'events_all' =>Events::all(),
-         'clients' => Clients::all(),
+         'clients' => Users::all(),
          'workers' => Workers::all(),
          'services' => Services::all(),
          'services_events' => ServicesEvents::all(),
@@ -125,7 +125,7 @@ class CalendarController extends Controller
     public function store(Request $request)
     {
 
-        $record_client = Clients::findOrFail($request->client);
+        $record_client = Users::findOrFail($request->client);
         $record_worker = Workers::findOrFail($request->worker);
         $services_temp = implode(',', array_column($request->services, 'id'));
         $services_array = explode(',', $services_temp);
@@ -293,7 +293,7 @@ class CalendarController extends Controller
 //                'events' => $events,
 //                'current_status' =>$request->values,
 //                'events_all' =>Events::all(),
-//                'clients' => Clients::all(),
+//                'clients' => Users::all(),
 //                'workers' => Workers::all(),
 //                'services' => Services::all(),
 //                'services_events' => ServicesEvents::all(),
