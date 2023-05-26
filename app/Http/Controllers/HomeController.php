@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Events;
-use App\Models\Clients;
+use App\Models\Users;
 use App\Models\Workers;
 use App\Models\Services;
 use App\Models\ServicesEvents;
