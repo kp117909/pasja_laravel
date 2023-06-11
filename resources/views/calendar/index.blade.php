@@ -36,9 +36,16 @@
               title: "HairLink <i class='fa-solid fa-spinner fa-spin-pulse'></i>",
               text: "Ładowanie danych",
               showConfirmButton: false
-          }).then((result) => {
-              calendar.refetchEvents();
-          });
+          })
+      }
+
+      var isLoadingComplete = false;
+      var loadingTimeout;
+
+      function checkLoadingComplete() {
+          if (!isLoadingComplete) {
+              hideLoadingMessage();
+          }
       }
 
       $.ajaxSetup({
@@ -79,6 +86,15 @@
 
               eventRender: function (event) {
                   const eventPath = event.event;
+                  console.log(eventPath.extendedProps)
+                  if (!eventPath.extendedProps || !eventPath.extendedProps.name_c || !eventPath.extendedProps.surname_c) {
+                      hideLoadingMessage();
+                      return false;
+                  }
+
+                  isLoadingComplete = true;
+
+                  clearTimeout(loadingTimeout);
 
                   event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
 
@@ -89,14 +105,18 @@
                   show_username = username.indexOf(getIndex) >= 0;
 
                   if (show_username) {
+                      console.log("Show");
                       hideLoadingMessage();
                       return true;
                   } else {
+                      console.log("no_show");
                       hideLoadingMessage();
                       return false;
                   }
-                  // return show_username
+
+                  console.log("idk"); // Przeniesiono przed instrukcjami return
               },
+
 
               eventResize: function (event) {
                   @if(auth()->user()->is_admin)
@@ -115,10 +135,13 @@
                               text: "HairLink",
                               icon: "success",
                               showConfirmButton: false
-                          }).then((result) => {
-                              calendar.refetchEvents();
-                          });
+                          })
                           calendar.refetchEvents();
+
+                          setTimeout(function() {
+                              Swal.close();
+                          }, 2000);
+
                       },
                       error: function (error) {
                           console.log(error)
@@ -151,10 +174,11 @@
                               text: "HairLink",
                               icon: "success",
                               showConfirmButton: false
-                          }).then((result) => {
-                              calendar.refetchEvents();
-                          });
+                          })
                           calendar.refetchEvents();
+                          setTimeout(function() {
+                              Swal.close();
+                          }, 2000);
                       },
                       error: function (error) {
                           console.log(error)
@@ -204,10 +228,11 @@
                                           text: "HairLink",
                                           icon: "success",
                                           showConfirmButton: false
-                                      }).then((result) => {
-                                          calendar.refetchEvents();
-                                      });
+                                      })
                                       calendar.refetchEvents();
+                                      setTimeout(function() {
+                                          Swal.close();
+                                      }, 2000);
                                   },
                                   error: function (error) {
                                       Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
@@ -275,10 +300,11 @@
                                                   text: "HairLink",
                                                   icon: "success",
                                                   showConfirmButton: false,
-                                              }).then((result) => {
-                                                  calendar.refetchEvents();
-                                              });
+                                              })
                                               calendar.refetchEvents();
+                                              setTimeout(function() {
+                                                  Swal.close();
+                                              }, 2000);
                                           },
                                           error: function (error) {
                                               Swal.fire('Nie udało sie edytować wizyty!', '', 'error');
@@ -287,7 +313,9 @@
                                   }
                               });
                           } else {
-                              Swal.close();
+                              setTimeout(function() {
+                                  Swal.close();
+                              }, 2000);
                           }
                       });
               @else
@@ -306,7 +334,7 @@
           });
           calendar.render();
           calendar.changeView(initialView);
-
+          loadingTimeout = setTimeout(checkLoadingComplete, 5000);
 
       $('.filter').on('change', function() {
           showLoadingMessage();
@@ -348,11 +376,12 @@
                             text: "HairLink",
                             icon: "success",
                             showConfirmButton: false,
-                        }).then((result) =>{
-                            calendar.refetchEvents();
-                            hideModal();
-                        });
+                        })
+                        hideModal();
                         calendar.refetchEvents();
+                        setTimeout(function() {
+                            Swal.close();
+                        }, 2000);
                     },
                     error:function(error)
                     {
@@ -395,11 +424,11 @@
                         text: "HairLink",
                         icon: "success",
                         showConfirmButton: false,
-                    }).then((result) =>{
-                        calendar.refetchEvents();
-                        hideModal();
-                    });
+                    })
                     calendar.refetchEvents();
+                    setTimeout(function() {
+                        hideModal();
+                    }, 2000);
                 },
                 error:function(error)
                 {
@@ -575,8 +604,6 @@
                     Swal.fire('Nie udało sie dodać wizyty!', '', 'error');
                 },
             })
-
-
         }
 
         function hideLoadingMessage() {
