@@ -267,22 +267,25 @@ class CalendarController extends Controller
             ], 404);
         }
         $getEvents = Events::all();
-        if($request->is_admin){
-            $event->delete();
+        if($request->isAdmin){
+           $event->delete();
         }else{
             $startDateTime = Carbon::parse($event->start);
-            $currentDateTime = Carbon::now();
-            $remainingTime = $currentDateTime->diffInMinutes($startDateTime);
+            $currentDateTime = Carbon::now()->addHours(2);
+            $remainingTime = $startDateTime->diffInMinutes($currentDateTime);
 
-            if ($remainingTime <= 60) {
-                    $event->delete();
-                    return $getEvents;
+            if ($startDateTime->isPast()) {
+                $remainingTime *= -1;
+            }
+            if ($remainingTime > 60) {
+                $event->delete();
+                return response()->json(['getEvents' => $getEvents, "type" => "success"]);
             } else {
                 return response()->json(['getEvents' => $getEvents, "type" => "error"]);
             }
         }
         return response()->json(['getEvents' => $getEvents, "type" => "success"]);
-}
+    }
 
     public function getEvents()
     {

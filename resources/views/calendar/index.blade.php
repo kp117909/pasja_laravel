@@ -97,6 +97,12 @@
                   @if(auth()->user()->is_admin)
                     event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
                   @else
+                  if (eventPath.extendedProps.client_id === {{auth()->user()->id}}) {
+                      var timeElement = event.el.querySelector('.fc-time');
+                      if (timeElement) {
+                          timeElement.style.backgroundColor = '#e4a11b';
+                      }
+                  }
                     event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_w + ' ' + eventPath.extendedProps.surname_w;
                   @endif
 
@@ -115,7 +121,6 @@
                   }
 
               },
-
 
               eventResize: function (event) {
                   @if(auth()->user()->is_admin)
@@ -220,7 +225,7 @@
                                   url: "{{ route('calendar.delete') }}",
                                   type: "GET",
                                   dataType: 'json',
-                                  data: {event_id: info.event.id, is_admin: true},
+                                  data: {event_id: info.event.id, isAdmin:1},
                                   success: function (response) {
                                       Swal.fire({
                                           title: "Wizyta usunięta pomyślnie!",
@@ -325,18 +330,20 @@
                           html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
                               '<ul class="list-group">' + services_list + '</ul>',
                           showCloseButton: false,
-                          showCancelButton: false,
+                          showCancelButton: true,
                           showDenyButton: false,
                           showConfirmButton: true,
-                          confirmButtonText: 'Usuń',
+                          cancelButtonText: "Cofnij",
+                          confirmButtonText: 'Owołaj wizytę',
                       }).then((result) =>{
                           if (result.isConfirmed) {
                               $.ajax({
                                   url: "{{ route('calendar.delete') }}",
                                   type: "GET",
                                   dataType: 'json',
-                                  data: {event_id: info.event.id,  is_admin: false},
+                                  data: {event_id: info.event.id,  isAdmin:0},
                                   success: function (response) {
+                                      console.log(response)
                                       if(response.type === "success"){
                                           Swal.fire({
                                               title: "Wizyta usunięta pomyślnie!",
@@ -358,6 +365,7 @@
                                       }
                                   },
                                   error: function (error) {
+                                      console.log(error)
                                       Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
                                   },
                               })
