@@ -12,6 +12,7 @@ use App\Models\Workers;
 use App\Models\Services;
 use App\Models\ServicesEvents;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
 
 class CalendarController extends Controller
 {
@@ -120,7 +121,7 @@ class CalendarController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Application|\Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
@@ -130,35 +131,72 @@ class CalendarController extends Controller
         $services_temp = implode(',', array_column($request->services, 'id'));
         $services_array = explode(',', $services_temp);
 
-       $event = Events::create([
-            'title' => $record_client->last_name,
-            'name_c' => $record_client->first_name,
-            'surname_c' => $record_client->last_name,
-            'phone_c' => $record_client->phone,
-            'client_id' => $record_client->id,
-            'name_w' => $record_worker->first_name,
-            'surname_w' => $record_worker->last_name,
-            'worker_id' => $record_worker->id,
-            'worker_icon' => $record_worker->icon_photo,
-            'overal_price' => $request->overall_price,
-            'start' => $request->date_start,
-            'end' => $request->date_end,
-            'color' =>$record_worker->color,
-        ]);
 
+        $dateStartValue = $request->date_start;
+        $dateStartDay = Carbon::parse($dateStartValue);
+        $dayOfWeek = (int)$dateStartDay->isoFormat('E');
+        $accessibility = $record_worker->accessibility;
 
+        $workerId = $request->worker;
+        $dateStart = $request->date_start;
+        $dateEnd = $request->date_end;
 
-        foreach($services_array as $service){
-             ServicesEvents::create([
-                'id_service' => $service,
-                'id_event' => $event->id,
-                'id_client' => $record_client->id,
-                'id_worker' => $record_worker->id,
-            ]);
+        $existingEvents = Events::where('worker_id', $workerId)
+            ->where(function ($query) use ($dateStart, $dateEnd) {
+                $query->whereBetween('start', [$dateStart, $dateEnd])
+                    ->orWhereBetween('end', [$dateStart, $dateEnd])
+                    ->orWhere(function ($query) use ($dateStart, $dateEnd) {
+                        $query->where('start', '<=', $dateStart)
+                            ->where('end', '>=', $dateEnd);
+                    });
+            })
+            ->get();
+
+        if ($existingEvents->isNotEmpty()) {
+            return response()->json(['accessibility' => $accessibility, 'type' => 'error_other']);
         }
 
-        return $event;
 
+        if (isset($accessibility[$dayOfWeek])) {
+            $start_time = Carbon::parse($accessibility[$dayOfWeek]['start_time'])->format('H:i');
+            $end_time = Carbon::parse($accessibility[$dayOfWeek]['end_time'])->format('H:i');
+
+            $timeStart = Carbon::parse($request->date_start)->format('H:i');
+            $timeEnd = Carbon::parse($request->date_end)->format('H:i');
+
+            if ($timeStart >= $start_time && $timeEnd <= $end_time) {
+                $event = Events::create([
+                    'title' => $record_client->last_name,
+                    'name_c' => $record_client->first_name,
+                    'surname_c' => $record_client->last_name,
+                    'phone_c' => $record_client->phone,
+                    'client_id' => $record_client->id,
+                    'name_w' => $record_worker->first_name,
+                    'surname_w' => $record_worker->last_name,
+                    'worker_id' => $record_worker->id,
+                    'worker_icon' => $record_worker->icon_photo,
+                    'overal_price' => $request->overall_price,
+                    'start' => $request->date_start,
+                    'end' => $request->date_end,
+                    'color' =>$record_worker->color,
+                ]);
+
+                foreach($services_array as $service){
+                    ServicesEvents::create([
+                        'id_service' => $service,
+                        'id_event' => $event->id,
+                        'id_client' => $record_client->id,
+                        'id_worker' => $record_worker->id,
+                    ]);
+                }
+
+                return response()->json(['event' => $event, 'type' => 'success']);
+            } else {
+                return response()->json(['accessibility' => $accessibility, 'type' => 'error']);
+            }
+
+        }
+        return response()->json(['accessibility' => $accessibility, 'type' => 'error']);
     }
 
     /**
@@ -229,23 +267,33 @@ class CalendarController extends Controller
             ], 404);
         }
         $getEvents = Events::all();
-        $event->delete();
-        return $getEvents;
+        if($request->is_admin){
+            $event->delete();
+        }else{
+            $startDateTime = Carbon::parse($event->start);
+            $currentDateTime = Carbon::now();
+            $remainingTime = $currentDateTime->diffInMinutes($startDateTime);
+
+            if ($remainingTime <= 60) {
+                    $event->delete();
+                    return $getEvents;
+            } else {
+                return response()->json(['getEvents' => $getEvents, "type" => "error"]);
+            }
+        }
+        return response()->json(['getEvents' => $getEvents, "type" => "success"]);
 }
 
     public function getEvents()
     {
         $events = array();
-        if (auth()->user()->is_admin) {
             $bookings = Events::all();
-        }else{
-            $bookings = Events::where('client_id' , '=' , auth()->user()->id)->get();
-        }
             foreach($bookings as $booking){
             $services = Services::leftJoin('services_events', function($join) {$join->on('id', '=', 'id_service');})->where('id_event', '=', $booking->id)->get();
                 $events[] = [
                     'id' => $booking->id,
                     'title' => $booking->title,
+                    'client_id'=> $booking->client_id,
                     'name_c' => $booking->name_c,
                     'surname_c' => $booking->surname_c,
                     'name_w' => $booking->name_w,

@@ -86,7 +86,6 @@
 
               eventRender: function (event) {
                   const eventPath = event.event;
-                  console.log(eventPath.extendedProps)
                   if (!eventPath.extendedProps || !eventPath.extendedProps.name_c || !eventPath.extendedProps.surname_c) {
                       hideLoadingMessage();
                       return false;
@@ -95,8 +94,11 @@
                   isLoadingComplete = true;
 
                   clearTimeout(loadingTimeout);
-
-                  event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
+                  @if(auth()->user()->is_admin)
+                    event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
+                  @else
+                    event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_w + ' ' + eventPath.extendedProps.surname_w;
+                  @endif
 
                   var username = $('input:checkbox.filter:checked').map(function() {
                       return $(this).val();
@@ -105,16 +107,13 @@
                   show_username = username.indexOf(getIndex) >= 0;
 
                   if (show_username) {
-                      console.log("Show");
                       hideLoadingMessage();
                       return true;
                   } else {
-                      console.log("no_show");
                       hideLoadingMessage();
                       return false;
                   }
 
-                  console.log("idk"); // Przeniesiono przed instrukcjami return
               },
 
 
@@ -221,7 +220,7 @@
                                   url: "{{ route('calendar.delete') }}",
                                   type: "GET",
                                   dataType: 'json',
-                                  data: {event_id: info.event.id},
+                                  data: {event_id: info.event.id, is_admin: true},
                                   success: function (response) {
                                       Swal.fire({
                                           title: "Wizyta usunięta pomyślnie!",
@@ -319,16 +318,62 @@
                           }
                       });
               @else
-              Swal.fire({
-                  title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
-                  icon: 'info',
-                  html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
-                      '<ul class="list-group">' + services_list + '</ul>',
-                  showCloseButton: false,
-                  showCancelButton: false,
-                  showDenyButton: false,
-              }).then((result) =>{
-              });
+                  if({{auth()->user()->id}} === info.event.extendedProps.client_id){
+                      Swal.fire({
+                          title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
+                          icon: 'info',
+                          html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4><br><h3> Usługi </h3><br><ul class="list-group">' +
+                              '<ul class="list-group">' + services_list + '</ul>',
+                          showCloseButton: false,
+                          showCancelButton: false,
+                          showDenyButton: false,
+                          showConfirmButton: true,
+                          confirmButtonText: 'Usuń',
+                      }).then((result) =>{
+                          if (result.isConfirmed) {
+                              $.ajax({
+                                  url: "{{ route('calendar.delete') }}",
+                                  type: "GET",
+                                  dataType: 'json',
+                                  data: {event_id: info.event.id,  is_admin: false},
+                                  success: function (response) {
+                                      if(response.type === "success"){
+                                          Swal.fire({
+                                              title: "Wizyta usunięta pomyślnie!",
+                                              text: "HairLink",
+                                              icon: "success",
+                                              showConfirmButton: false
+                                          })
+                                          calendar.refetchEvents();
+                                          setTimeout(function() {
+                                              Swal.close();
+                                          }, 2000);
+                                      }else{
+                                          Swal.fire({
+                                              title: "Wizyte można usunąć maksymalnie godzine przed data rozpoczęcia!",
+                                              text: "HairLink",
+                                              icon: "error",
+                                              showConfirmButton: false
+                                          })
+                                      }
+                                  },
+                                  error: function (error) {
+                                      Swal.fire('Nie udało sie usunąć wizyty!', '', 'error');
+                                  },
+                              })
+                          }
+                      });
+                  }else{
+                      Swal.fire({
+                          title: '</p>Wizyta zarezerwowana przez innego klienta<br> <br>Godzina: ' + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
+                          icon: 'info',
+                          html: '<p><h4><b>Pracownik</b>: ' + info.event.extendedProps.name_w + ' ' + info.event.extendedProps.surname_w + '</h4>',
+                          showCloseButton: false,
+                          showCancelButton: false,
+                          showDenyButton: false,
+                      }).then((result) =>{
+                      });
+                  }
               @endif
               }
           });
@@ -371,20 +416,39 @@
                     },
                     success:function(response)
                     {
-                        Swal.fire({
-                            title: "Wizyta dodana pomyślnie!",
-                            text: "HairLink",
-                            icon: "success",
-                            showConfirmButton: false,
-                        })
-                        hideModal();
-                        calendar.refetchEvents();
-                        setTimeout(function() {
-                            Swal.close();
-                        }, 2000);
+                        if(response.type === "success"){
+                            Swal.fire({
+                                title: "Wizyta dodana pomyślnie!",
+                                text: "HairLink",
+                                icon: "success",
+                                showConfirmButton: false,
+                            })
+                            hideModal();
+                            calendar.refetchEvents();
+                            setTimeout(function() {
+                                Swal.close();
+                            }, 2000);
+                        }else if(response.type === "error"){
+                            Swal.fire({
+                                title: "Ten pracownik nie jest dyspozycyjny w tych godzinach!",
+                                text: "HairLink",
+                                icon: "error",
+                                showConfirmButton: true
+                            });
+                        }else{
+                            Swal.fire({
+                                title: "Ten pracownik ma już wizytę w tym terminie!",
+                                text: "HairLink",
+                                icon: "error",
+                                showConfirmButton: true
+                            });
+                        }
+                        console.log(response)
                     },
-                    error:function(error)
+                    error:function(xhr, status, error)
                     {
+                        console.log(xhr)
+                        console.log(status)
                         console.log(error)
                         Swal.fire('Nie udało sie dodać wizyty!', '', 'error');
                     },
@@ -419,16 +483,33 @@
                 },
                 success:function(response)
                 {
-                    Swal.fire({
-                        title: "Wizyta dodana pomyślnie!",
-                        text: "HairLink",
-                        icon: "success",
-                        showConfirmButton: false,
-                    })
-                    calendar.refetchEvents();
-                    setTimeout(function() {
+                    if(response.type === "success"){
+                        Swal.fire({
+                            title: "Wizyta dodana pomyślnie!",
+                            text: "HairLink",
+                            icon: "success",
+                            showConfirmButton: false,
+                        })
                         hideModal();
-                    }, 2000);
+                        calendar.refetchEvents();
+                        setTimeout(function() {
+                            Swal.close();
+                        }, 2000);
+                    }else if(response.type === "error"){
+                        Swal.fire({
+                            title: "Ten pracownik nie jest dyspozycyjny w tych godzinach!",
+                            text: "HairLink",
+                            icon: "error",
+                            showConfirmButton: true
+                        });
+                    }else{
+                        Swal.fire({
+                            title: "Ten pracownik ma już wizytę w tym terminie!",
+                            text: "HairLink",
+                            icon: "error",
+                            showConfirmButton: true
+                        });
+                    }
                 },
                 error:function(error)
                 {
@@ -588,7 +669,6 @@
                 },
                 success:function(response)
                 {
-                    console.log(response)
                     Swal.fire({
                         title: "Dyspozycyjność zaktualizowana!",
                         text: "Od teraz twoje godziny pracy w " + dayString + " to " + startTime + "-"  + endTime ,
