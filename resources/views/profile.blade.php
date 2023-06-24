@@ -3,6 +3,9 @@
 @section('content')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 
+    @if(auth()->user()->hasRole('admin'))
+        <div class="mt-5 text-center"><button class="btn btn-success btn-rounded" type="button">Zapisz zmiany</button>
+    @endif
     <div class="container rounded-3 bg-white opacity-90 mb-5">
     <div class="row d-flex justify-content-end">
         <div class="col-md-4">

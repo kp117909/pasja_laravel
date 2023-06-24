@@ -4,7 +4,8 @@
     <meta charset="utf-8">
 
     <!-- Stylesheet -->
-    <link href = "{{url('css/app.css')}}" rel = "stylesheet"/>
+{{--    <link href = "{{url('css/app.css')}}" rel = "stylesheet"/>--}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <!-- custom alerts -->

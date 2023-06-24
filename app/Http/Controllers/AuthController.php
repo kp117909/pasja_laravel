@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Session;
-use App\Models\Users;
+use App\Models\User;
 use Hash;
 
 class AuthController extends Controller
@@ -45,7 +45,7 @@ class AuthController extends Controller
             'last_name' => 'required',
             're_password' => 'required|same:password',
             'phone' => 'required',
-            'login' => 'required|unique:users',
+            'login' => 'required|unique:user',
             'password' => 'required|min:6',
         ]);
 
@@ -72,7 +72,7 @@ class AuthController extends Controller
 
     public function create(array $data)
     {
-        return Users::create([
+        return User::create([
             'login' => $data['login'],
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
