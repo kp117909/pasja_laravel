@@ -7,6 +7,8 @@ use App\Models\User;
 use App\Models\Services;
 use App\Models\Events;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class ClientController extends Controller
 {
@@ -73,6 +75,17 @@ class ClientController extends Controller
     public function update(Request $request)
     {
         $client = User::findOrFail($request->id_client);
+//        $role = Role::create(['name' => 'employee']);
+//
+//        $permission_admins = Permission::create(['name' => 'add Admins']);
+//        $permission_employees = Permission::create(['name' => 'add Employees']);
+//
+//        $role->givePermissionTo($permission_admins);
+//
+//
+//        $role->givePermissionTo($permission_employees);
+
+//        $client->assignRole('admin');
 
         $client->first_name = $request->first_name;
         $client->last_name = $request->last_name;

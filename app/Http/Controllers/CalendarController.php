@@ -344,7 +344,7 @@ class CalendarController extends Controller
 //                'events' => $events,
 //                'current_status' =>$request->values,
 //                'events_all' =>Events::all(),
-//                'clients' => Users::all(),
+//                'clients' => User::all(),
 //                'workers' => Workers::all(),
 //                'services' => Services::all(),
 //                'services_events' => ServicesEvents::all(),
