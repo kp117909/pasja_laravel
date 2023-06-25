@@ -6,6 +6,9 @@
     <div class="container rounded-3 bg-white opacity-90 mb-5">
     <div class="row d-flex justify-content-end">
         <div class="col-md-4">
+            @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('employee'))
+                <div class="mt-5 text-center"><button class="btn btn-success btn-rounded" type="submit">Zapisz zmianey</button></div>
+            @endif
             <form action="{{ route('profile.update') }}" enctype="multipart/form-data" method="POST">
                 @csrf
             <div class="d-flex flex-column align-items-center text-center p-6 py-2">
