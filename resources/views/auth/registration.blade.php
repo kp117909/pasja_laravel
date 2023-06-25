@@ -107,7 +107,7 @@
                   </div>
 
                   <!-- <a class="small text-muted" href="#!">Forgot password?</a> -->
-                  <p class="mb-2 pb-lg-2""> Posiadasz konto? <a href="{{route('login')}}"
+                  <p class="mb-2 pb-lg-2"> Posiadasz konto? <a href="{{route('login')}}"
                       style="color: #393f81;">Zaloguj się tutaj!</a></p>
                   <a href="#!" class="small text-muted">Warunki koszytania.</a>
                   <a href="#!" class="small text-muted">Polityka prywatności</a>
