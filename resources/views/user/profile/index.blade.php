@@ -22,7 +22,7 @@
             <div class="p-3 py-5">
                 <div class="d-flex flex-column align-items-center text-center">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="text-center">Edytuj dane</h4>
+                        <h4 class="text-center">Edytuj danes</h4>
                     </div>
                 </div>
                 <div class="form-outline mb-3">
