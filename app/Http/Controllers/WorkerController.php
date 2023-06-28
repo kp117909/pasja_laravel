@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Events;
+use App\Models\Services;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workers;
 use Illuminate\Http\Request;
@@ -37,6 +40,61 @@ class WorkerController extends Controller
         return response()->json(['message' => 'Godziny dyspozycyjności zostały zapisane.'], 200);
     }
 
+    public function update(Request $request)
+    {
+        $worker = Workers::findOrFail($request->id_client);
 
 
+//        $role = Role::create(['name' => 'employee']);
+//
+//        $permission_admins = Permission::create(['name' => 'add Admins']);
+//        $permission_employees = Permission::create(['name' => 'add Employees']);
+//
+//        $role->givePermissionTo($permission_admins);
+//
+//
+//        $role->givePermissionTo($permission_employees);
+
+//        $client->assignRole('admin');
+
+        $worker->first_name = $request->first_name;
+        $worker->last_name = $request->last_name;
+        $worker->phone = $request->phone;
+        $worker->color = $request->color;
+
+        $filename = null;
+        if($request->hasFile('icon_photo')){
+            $file = $request->file('icon_photo');
+            $extension = $file->getClientOriginalExtension();
+            $filename = time().'.'.$extension;
+            $file->move('png/', $filename);
+            $worker->icon_photo  = $filename;
+        }
+        $worker-> save();
+
+        $filteredEvents = Events::where('worker_id', $request->id_client)->get();
+
+        foreach ($filteredEvents as $event) {
+            $event->name_w = $worker->first_name;
+            $event->surname_w = $worker->last_name;
+            $event->worker_icon = $worker->icon_photo;
+            $event->color = $worker->color;
+            $event->save();
+        }
+
+        return Redirect('worker.profile');
+    }
+
+    public function profile(Request $request){
+
+        return view('profile_worker', [
+            'services'=>Services::all(),
+        ]);
+    }
+
+    public function cardProfile(Request $request){
+
+        $worker = Workers::findOrFail($request->id);
+        return view('user.profile.workercard', ['worker' => $worker]);
+    }
 }

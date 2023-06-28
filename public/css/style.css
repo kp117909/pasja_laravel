@@ -21,9 +21,6 @@ html, body{
 
 #calendar{
     background-color: white;
-    padding: 0.5vw;
-    margin-left:14vw;
-    width:80vw;
     border-radius: 0.5vw;
     opacity: 0.9;
 }

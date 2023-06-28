@@ -9,22 +9,23 @@
 
 
     <div class = "row">
-
-        <div class="container rounded-3 bg-white opacity-90 mb-5 w-50">
+        <div class="container rounded-3 bg-white opacity-90 mb-5 w-50 mt-2">
             <div class = "d-flex flex-column align-items-center text-center">
                 <ul class="list-inline">
                 @foreach($workers as $worker)
                     <li class = "list-inline-item">
-                        <input class="filter form-check-input" id ="workers_filter" type="checkbox" value="{{$worker->last_name}}_{{$worker->id}}" checked>
-                        {{ $worker->first_name }} {{ $worker -> last_name }}
-                        <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
+                        <div>
+                            <input class="filter form-check-input" id ="workers_filter" type="checkbox" value="{{$worker->last_name}}_{{$worker->id}}" checked>
+                            <a href="{{ route('worker.cardProfile', ['id' => $worker->id]) }}">{{ $worker->first_name }} {{ $worker->last_name }}</a>
+                            <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
+                        </div>
                     </li>
                 @endforeach
                 </ul>
             </div>
         </div>
 
-      <div id = "calendar"></div>
+      <div id = "calendar" class = "container"></div>
 
     </div>
 

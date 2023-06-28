@@ -52,6 +52,11 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('client.profile', [ClientController::class, 'profile'])->name('client.profile');
 
     Route::post('client.update', [ClientController::class, 'update'])->name('profile.update');
+
+    // Worker Profile
+    Route::get('worker.profile', [WorkerController::class, 'profile'])->name('worker.profile');
+
+    Route::post('worker.update', [WorkerController::class, 'update'])->name('profile-worker.update');
     // end Client Profile
 
     // Basic Pages
@@ -85,13 +90,15 @@ Route::group(['middleware' => ['auth']], function () {
     //Workers
     Route::get('worker.saveAvailability', [WorkerController::class, 'saveAvailability'])->name('worker.saveAvailability');
 
+    Route::get('worker.cardProfile/{id}', [WorkerController::class, 'cardProfile'])->name('worker.cardProfile');
+
 
 //    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
 
     Route::get('/calendar.events', [CalendarController::class, 'getEvents']);
     //end Calendar
 
-});
+    });
 
 
 

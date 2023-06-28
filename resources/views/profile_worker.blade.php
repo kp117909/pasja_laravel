@@ -2,24 +2,25 @@
 
 @section('content')
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-
     <div class="container rounded-3 bg-white opacity-90 mb-5">
     <div class="row d-flex justify-content-end">
         <div class="col-md-4">
             @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('employee'))
-                <div class="mt-5 text-center"><a href="{{ route('worker.profile') }}" class="btn btn-primary btn-rounded">Przejdź do profilu pracownika</a></div>
+                <div class="mt-5 text-center">
+                    <a href="{{ route('client.profile') }}" class="btn btn-primary btn-rounded">Przejdź do profilu użytkownika</a>
+                </div>
             @endif
-            <form action="{{ route('profile.update') }}" enctype="multipart/form-data" method="POST">
+            <form action="{{ route('profile-worker.update') }}" enctype="multipart/form-data" method="POST">
                 @csrf
             <div class="d-flex flex-column align-items-center text-center p-6 py-2">
-                <img class="rounded-circle border border-3 mt-5" id ="my_photo" width="128px" height="128px" src="{{asset('png/'.auth()->user()->icon_photo)}}">
-                    <span class="text-primary fw-bold"> {{ auth()->user()->first_name }}</span><span class="text-black-50">{{ auth()->user()->phone }}</span>
+                <img class="rounded-circle border border-3 mt-5" id ="my_photo" width="128px" height="128px" src="{{asset('png/'.auth()->user()->worker->icon_photo)}}">
+                    <span class="text-primary fw-bold"> {{ auth()->user()->worker->first_name }}</span><span class="text-black-50">{{ auth()->user()->worker->phone }}</span>
             </div>
             <div class="d-flex justify-content-center">
                 <div class="btn btn-primary btn-rounded">
                     <label class="form-label text-white m-1" for="icon_photo">Wybierz zdjęcie</label>
                     <input type="file" name = "icon_photo" id="icon_photo" class="form-control d-none" />
-                    <input type="number"  style = "display:none;" id = "id_client" name = "id_client" value = "{{ auth()->user()->id }}"/>
+                    <input type="number"  style = "display:none;" id = "id_client" name = "id_client" value = "{{ auth()->user()->worker->id }}"/>
                 </div>
             </div>
             <div class="p-3 py-5">
@@ -27,28 +28,24 @@
                     <h4 class="text-center">Edytuj dane</h4>
                 </div>
                 <div class="form-outline mb-3">
-                    <input type="text" id="first_name" name = "first_name" value = "{{ auth()->user()->first_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź imię')"  oninput="setCustomValidity('')" required/>
+                    <input type="text" id="first_name" name = "first_name" value = "{{ auth()->user()->worker->first_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź imię')"  oninput="setCustomValidity('')" required/>
                     <label class="form-label" for="first_name">Imię</label>
                 </div>
                 <div class="form-outline mb-3">
-                    <input type="text" id="last_name" name = "last_name" value = "{{ auth()->user()->last_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź nazwisko')"  oninput="setCustomValidity('')" required/>
+                    <input type="text" id="last_name" name = "last_name" value = "{{ auth()->user()->worker->last_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź nazwisko')"  oninput="setCustomValidity('')" required/>
                     <label class="form-label" for="last_name">Nazwisko</label>
                 </div>
 
                 <div class="form-outline mb-3">
-                    <input type="text" id="phone" maxlength="11" name="phone" onkeydown="phoneNumberFormat()" oninvalid="this.setCustomValidity('Nieprawidłowy format')" class="form-control" value = "{{ auth()->user()->phone }}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required>
+                    <input type="text" id="phone" maxlength="11" name="phone" onkeydown="phoneNumberFormat()" oninvalid="this.setCustomValidity('Nieprawidłowy format')" class="form-control" oninput="setCustomValidity('')" value = "{{ auth()->user()->worker->phone }}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required>
                     <label class="form-label" for="phone">Nr Telefonu [000-000-000]</label>
                 </div>
 
                 <div class="form-outline mb-3">
-                    <input type="text" id="adress" name = "adress" value = "{{ auth()->user()->adress }}" class="form-control form-control" />
-                    <label class="form-label" for="adress">Adress</label>
+                    <input type="color" id="color" name="color"  oninvalid="this.setCustomValidity('Nieprawidłowy format')"  class="form-control" oninput="setCustomValidity('')" value = "{{ auth()->user()->worker->color }}" required>
+                    <label class="form-label" for="color">Wybór Koloru Wizyt</label>
                 </div>
 
-                <div class="form-outline mb-3">
-                    <input type="text"  id="postcode" name = "postcode" value = "{{ auth()->user()->postcode }}" class="form-control" />
-                    <label class="form-label" for="postcode">Kod pocztowy</label>
-                </div>
 
                 <div class="mt-2 text-center"><button class="btn btn-success btn-rounded" type="submit">Zapisz zmiany</button></div>
             </div>
@@ -57,56 +54,76 @@
         <div class="col-md-8">
             <div class="p-3 py-5">
                 <div class="d-flex flex-column align-items-center text-center">
-                    <h4 class="text-center">Historia wizyt</h4>
+                    @if(auth()->user()->hasRole('admin'))
+                        <h4 class="text-center">Panel dodawania/edycji usług</h4>
+                    @else
+                        <h4 class="text-center">Dostępne usługi pracownicze</h4>
+                    @endif
                 </div>
-                <table id ="history_table" class="table align-middle mb-0 bg-white">
-                    <thead class="bg-light">
-                    <tr>
-                        <th>@sortablelink('') Id</th>
-                        <th>Pracownik</th>
-                        <th>Usługa</th>
-                        <th>Kwota</th>
-                        <th>Data</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($events as $event)
+                    <table id ="services_table" class="table align-middle mb-0 bg-white">
+                        <thead class="bg-light">
+                        <tr>
+                            <th>@sortablelink('') Id</th>
+                            <th>Usługa</th>
+                            <th>Szczegóły</th>
+                            @if(auth()->user()->hasRole('admin'))
+                                <th>Operacje</th>
+                            @endif
+                        </tr>
+                        </thead>
+                        <tbody>
+                    @foreach($services as $service)
                         <tr>
                             <td>
                                 <span class="badge badge-success rounded d-inline">
-                                    {{$event->id}}
+                                    {{$service->id}}
                                 </span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img
-                                        src="{{asset('png/'.$event->worker_icon)}}"
+                                        src="{{asset('png/services_icons/'.$service->img)}}"
                                         class="rounded-circle"
                                         alt=""
                                         style="width: 45px; height: 45px"
                                     />
                                     <div class="ms-3">
-                                        <p class="fw-bold mb-1">{{$event->name_w}} {{$event->surname_w}}</p>
-                                        {{--                                    <p class="text-muted mb-0">alex.ray@gmail.com</p>--}}
+                                        <p class="fw-bold mb-1">{{$service->service_name}}</p>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-primary btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_{{$event->id}}">
-                                    Pokaż
-                                </button>
-                                {{--                            <p class="text-muted mb-0">Finance</p>--}}
+                                <span class="badge badge-primary rounded d-inline">
+                                    {{$service->price}} zł / {{$service->time}} min
+                                </span>
                             </td>
-                            <td>
-                            <span class="badge badge-primary rounded d-inline">
-                                {{$event->overal_price}} zł
-                            </span>
-                            </td>
-                            <td>{{$event->start}}</td>
+                            @if(auth()->user()->hasRole('admin'))
+                                <td>
+                                    <div class="row" style = "padding-left: 0px">
+                                        <div class="col-md-4 mr-2">
+                                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$service->id}}" id = "{{$service->id}}" class="btn btn-primary btn-rounded">
+                                                <i class="fa-solid fa-pen-to-square"></i>
+                                            </button>
+                                        </div>
+                                        <div class="col-md-4 ml-4">
+                                                <button type="button" name = "delete_button" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
+                                                    <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </td>
+                            @endif
                         </tr>
                     @endforeach
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <div class="d-flex flex-column align-items-center text-center">
+                        @if(auth()->user()->hasRole('admin'))
+                            <button type="button" class="btn btn-success btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_addNew">
+                                Dodaj Usługę
+                            </button>
+                        @endif
+                    </div>
             </div>
         </div>
     </div>
@@ -178,29 +195,6 @@
             </div>
         </div>
     </div>
-
-    @foreach($events as $event)
-    <div class="modal fade" id="modal_{{$event->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Usługi przypisane do Wizyty</h5>
-                </div>
-                    <div class="modal-body"><ul class="list-group">
-                        @foreach($services_events as $se)
-                            @if($se->id_event == $event->id)
-                                <li class="list-group-item mb-2">{{$se->service_name}} | {{$se->price}}zł</li>
-                            @endif
-                        @endforeach
-                        </ul>
-                    </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Zamknij</button>
-                </div>
-            </div>
-        </div>
-    </div>
-@endforeach
 
 @foreach($services as $service)
     <div class="modal fade" id="modalEdit_{{$service->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
