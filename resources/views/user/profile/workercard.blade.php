@@ -15,7 +15,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 @section('content')
-    <div class="container bootdey">
+    <div class="container">
         <section class="col-md-12">
             <div class="row">
                 <div class="col-sm-12 col-md-4">
@@ -60,98 +60,35 @@
                 </div>
                 <div class="col-sm-12 col-md-8">
                     <div class="review-block">
+                        @foreach($worker->review as $review)
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="review-block-img">
                                     <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-rounded" alt="">
                                 </div>
-                                <div class="review-block-name"><a href="#">nktailor</a></div>
-                                <div class="review-block-date">January 29, 2016<br>1 day ago</div>
+                                <div class="review-block-name"><a href="#">{{$review->client->first_name}} {{$review->client->last_name}}</a></div>
+{{--                                <div class="review-block-date">{{$review->created_at}}<br>dni temu[dozrb]</div>--}}
                             </div>
                             <div class="col-sm-9">
                                 <div class="review-block-rate">
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
+                                    @for($i = 1; $i <= 5; $i++)
+                                        @if($i <= $review->rating)
+                                            <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
+                                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                            </button>
+                                        @else
+                                            <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
+                                                <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                                            </button>
+                                        @endif
+                                    @endfor
                                 </div>
-                                <div class="review-block-title">this was nice in buy</div>
-                                <div class="review-block-description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type. </div>
+                                <div class="review-block-title">Opinia na temat wizyty</div>
+                                <div class="review-block-description">{{$review->comment}}</div>
                             </div>
                         </div>
                         <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <div class="review-block-img">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-rounded" alt="">
-                                </div>
-                                <div class="review-block-name"><a href="#">nktailor</a></div>
-                                <div class="review-block-date">January 29, 2016<br>1 day ago</div>
-                            </div>
-                            <div class="col-sm-9">
-                                <div class="review-block-rate">
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <div class="review-block-title">this was nice in buy</div>
-                                <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <div class="review-block-img">
-                                    <img src="https://bootdey.com/img/Content/avatar/avatar6.png" class="img-rounded" alt="">
-                                </div>
-                                <div class="review-block-name"><a href="#">nktailor</a></div>
-                                <div class="review-block-date">January 29, 2016<br>1 day ago</div>
-                            </div>
-                            <div class="col-sm-9">
-                                <div class="review-block-rate">
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-xs" aria-label="Left Align">
-                                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-                                    </button>
-                                </div>
-                                <div class="review-block-title">this was nice in buy</div>
-                                <div class="review-block-description">this was nice in buy. this was nice in buy. this was nice in buy. this was nice in buy this was nice in buy this was nice in buy this was nice in buy this was nice in buy</div>
-                            </div>
-                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

@@ -28,5 +28,11 @@ class Events extends Model
 
     public $sortable = ['id'];
 
+
+    public function notification()
+    {
+        return $this->hasOne(Notifications::class, 'event_id' , 'id');
+    }
+
     use HasFactory;
 }

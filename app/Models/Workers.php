@@ -14,6 +14,11 @@ class Workers  extends \Illuminate\Foundation\Auth\User
         return $this->belongsTo(User::class, 'id');
     }
 
+    public function review()
+    {
+        return $this->hasMany(Review::class, 'worker_id' , 'id');
+    }
+
     protected $fillable = [
         'first_name',
         'last_name',

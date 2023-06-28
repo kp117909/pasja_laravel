@@ -56,7 +56,9 @@
                         loading="lazy"
                     >
                 </a>
+
             </div>
+            <x-notifications-component />
             <a
                 href="{{ route('client.profile') }}" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
 
@@ -85,6 +87,13 @@
             </i>
             <span>Wyloguj</span>
           </a>
+
+
+            <a href="{{ route('add.notify') }}" class="list-group-item list-group-item-action py-2 ripple">
+                <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-3"></i>
+                </i>
+                <span>Notifikacje DEV</span>
+            </a>
 
 
         </div>

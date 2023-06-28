@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\WorkerController;
@@ -33,25 +34,16 @@ Route::post('post-registration', [AuthController::class, 'postRegistration'])->n
 
 Route::group(['middleware' => ['auth']], function () {
 
-//    Route::group([
-//        'prefix' =>'admin',
-//        'middleware'=>'is_admin',
-//        'as'=>'admin.',
-//    ],function (){
-//        Route::get('profile', [ProfileController::class, 'index'])->name('profile.index');
-//    });
-//
-//    Route::group([
-//        'prefix' =>'user',
-//        'as'=>'user.',
-//    ],function (){
-//        Route::get('profile', [\App\Http\Controllers\User\ProfileController::class, 'index'])->name('profile.index');
-//    });
-
     // Client Profile
     Route::get('client.profile', [ClientController::class, 'profile'])->name('client.profile');
 
     Route::post('client.update', [ClientController::class, 'update'])->name('profile.update');
+
+    Route::post('client.notify', [ClientController::class, 'notify'])->name('client.notify');
+
+    Route::get('worker.rate/{id}/{n_id}', [ClientController::class, 'rate'])->name('worker.rate');
+
+    Route::post('rate.store', [ClientController::class, 'createRate'])->name('rate.store');
 
     // Worker Profile
     Route::get('worker.profile', [WorkerController::class, 'profile'])->name('worker.profile');
@@ -92,6 +84,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('worker.cardProfile/{id}', [WorkerController::class, 'cardProfile'])->name('worker.cardProfile');
 
+    Route::get('add.notify', [Controller::class, 'notifyAdd'])->name('add.notify');
 
 //    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
 

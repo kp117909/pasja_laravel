@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notifications;
+use App\Models\Review;
+use App\Models\Workers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Services;
@@ -126,5 +129,32 @@ class ClientController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function rate($id, $n_id){
+        $worker = Workers::findOrFail($id);
+
+        return view("user.profile.worker_rate", ['worker' => $worker , 'n_id' =>$n_id]);
+    }
+
+    public function createRate(Request $request){
+        $validatedData = $request->validate([
+            'worker_id' => 'required',
+            'client_id' => 'required',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string',
+        ]);
+
+        // Utworzenie oceny
+        $review = Review::create($validatedData);
+
+        if($review){
+            $notify = Notifications::findOrFail($request->notification_id);
+            $notify->removed = 1;
+            $notify->save();
+        }
+
+        return redirect()->route('home.index');
+
     }
 }
