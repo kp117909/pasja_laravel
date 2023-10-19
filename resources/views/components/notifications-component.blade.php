@@ -23,7 +23,10 @@
 
 <a id="notifications" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link">
     @if($exist)
-        <i class="fa-regular fa-bell fa-shake fa-xl p-4"></i>
+        <i class="fa-regular fa-bell fa-shake fa-xl p-4">
+            <span class="notifyNumber">
+            </span>
+        </i>
     @else
         <i class="fa fa-bell-o"></i>
     @endif

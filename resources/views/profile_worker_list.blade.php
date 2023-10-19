@@ -57,8 +57,8 @@
                     @if(auth()->user()->hasRole('admin'))
                         <div class ="row">
                             <div calss = "col-md-12">
-                                <a class="btn btn btn-rounded">Panel dodawania/edycji usług</a>
-                                <a href = "{{route('users.list')}}" class="btn btn btn-rounded">Panel dodawania/edycji pracowników</a>
+                                <a href = "{{route('worker.profile')}}" class="btn btn btn-rounded">Panel dodawania/edycji usług</a>
+                                <a class="btn btn btn-rounded">Panel dodawania/edycji pracowników/użytkowników</a>
                             </div>
                         </div>
                     @else
@@ -69,182 +69,104 @@
                         <thead class="bg-light">
                         <tr>
                             <th>@sortablelink('') Id</th>
-                            <th>Usługa</th>
-                            <th>Szczegóły</th>
-                            @if(auth()->user()->hasRole('admin'))
-                                <th>Operacje</th>
-                            @endif
+                            <th>Dane</th>
+                            <th>Rola</th>
+                            <th>Operacje</th>
                         </tr>
                         </thead>
                         <tbody>
-                    @foreach($services as $service)
+                    @foreach($users as $user)
                         <tr>
                             <td>
                                 <span class="badge badge-success rounded d-inline">
-                                    {{$service->id}}
+                                    {{$user->id}}
                                 </span>
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <img
-                                        src="{{asset('png/services_icons/'.$service->img)}}"
+                                        src="{{asset('png/'.$user->icon_photo)}}"
                                         class="rounded-circle"
                                         alt=""
                                         style="width: 45px; height: 45px"
                                     />
                                     <div class="ms-3">
-                                        <p class="fw-bold mb-1">{{$service->service_name}}</p>
+                                        <p class="fw-bold mb-1">{{$user->first_name}} {{$user->last_name}}</p>
                                     </div>
                                 </div>
                             </td>
                             <td>
                                 <span class="badge badge-primary rounded d-inline">
-                                    {{$service->price}} zł / {{$service->time}} min
+                                   @if($user->hasRole('admin'))
+                                        Administrator
+                                    @elseif($user->hasRole('employee'))
+                                        Pracownik
+                                    @else
+                                        Klient
+                                    @endif
                                 </span>
                             </td>
-                            @if(auth()->user()->hasRole('admin'))
                                 <td>
                                     <div class="row" style = "padding-left: 0px">
                                         <div class="col-md-4 mr-2">
-                                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$service->id}}" id = "{{$service->id}}" class="btn btn-primary btn-rounded">
+                                            <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$user->id}}" id = "{{$user->id}}" class="btn btn-primary btn-rounded">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </button>
                                         </div>
                                         <div class="col-md-4 ml-4">
-                                                <button type="button" name = "delete_button" id = "{{$service->id}}" class="btn btn-danger btn-rounded delete">
+                                                <button type="button" name = "delete_button" id = "{{$user->id}}" class="btn btn-danger btn-rounded delete">
                                                     <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </td>
-                            @endif
                         </tr>
                     @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex flex-column align-items-center text-center">
-                        @if(auth()->user()->hasRole('admin'))
-                            <button type="button" class="btn btn-success btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_addNew">
-                                Dodaj Usługę
-                            </button>
-                        @endif
-                    </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modal_addNew" tabindex="-1" aria-labelledby="addModal" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModal">Dodaj nową usługę</h5>
-            </div>
-            <div class="modal-body">
-                <form action="{{ route('services.store') }}" enctype="multipart/form-data" method="POST">
-                    @csrf
-                    <div class="d-flex flex-column align-items-center text-center">
-                        <h4 class="text-center">Wybierz zdjęcie</h4>
-                    </div>
-                    <div class="d-flex justify-content-center">
-                        <select class="selectpicker" name = "select_icon_service" data-live-search="true">
-                            <option data-tokens="IC1" value = "dye.jpg" data-content="<img src='{{asset('png/services_icons/dye.jpg')}}' style='width: 50%;'><span class='badge badge-primary'>IC 1</span>"></option>
-                            <option data-tokens="IC2" value = "scissors.png" data-content="<img src='{{asset('png/services_icons/scissors.png')}}' style='width: 50%;'><span class='badge badge-primary'>IC 2</span>"></option>
-                            <option data-tokens="IC3" value = "swithp.jpg" data-content="<img src='{{asset('png/services_icons/swithp.jpg')}}' style='width: 50%;'><span class='badge badge-primary'>IC 3</span>"></option>
-                        </select>
-                    </div>
-                        <div class="d-flex flex-column align-items-center text-center">
-                            <h4 class="text-center">Wprowadź dane</h4>
-                        </div>
-                        <div class = "row">
-                            <div class="col-md-12 mb-2 pb-2">
-                                <div class="form-outline mb-3">
-                                    <input type="text" id="service_name" name = "service_name"  class="form-control" />
-                                    <label class="form-label" for="service_name">Nazwa Usługi</label>
-                                </div>
-                            </div>
 
-                             <div class="col-md-4 mb-2 pb-2">
-                                 <div class="form-outline mb-3">
-                                     <input type="number" id="price" name = "price" class="form-control" />
-                                     <label class="form-label" for="price">Cena</label>
-                                 </div>
-                             </div>
-
-                            <div class="col-md-2 mb-2 pb-2" >
-                                <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control" />
-                            </div>
-
-                            <div class="col-md-4 mb-2 pb-2">
-                                <div class="form-outline mb-3">
-                                    <input type="number" id="time" name = "time" class="form-control" />
-                                    <label class="form-label" for="time">Czas</label>
-                                </div>
-                            </div>
-
-                            <div class="col-md-2 mb-2 pb-2">
-                                <input disabled type="text" placeholder="min" id="time_min" name = "time_min"  class="form-control" />
-                            </div>
-
-                            <div class="d-flex flex-column align-items-center text-center">
-                                <button type="submit" class="btn btn-success btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_addNew">
-                                    Potwierdź
-                                </button>
-                            </div>
-                        </div>
-                </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Zamknij</button>
-            </div>
-        </div>
-    </div>
-
-@foreach($services as $service)
-    <div class="modal fade" id="modalEdit_{{$service->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+@foreach($users as $user)
+    <div class="modal fade" id="modalEdit_{{$user->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Edycja usługi</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Edycja użytkownika</h5>
                 </div>
                 <div class="modal-body">
-                    <form action="{{ route('services.update') }}" enctype="multipart/form-data" method="POST">
+                    <form action="{{ route('user.update') }}" enctype="multipart/form-data" method="POST">
                         @csrf
                         <div>
-                            <div class = "row">
-                                <div class="col-md-12">
-                                    <div class="form-outline mb-3">
-                                        <input type="text" id="service_name" name = "service_name" value = "{{$service->service_name}}"  class="form-control form-control" />
-                                        <label class="form-label" for="service_name">Nazwa Usługi</label>
-                                        <input type="number"  style = "display:none;" id = "id_service" name = "id_service" value = "{{ $service->id}}"/>
-                                    </div>
+                            <div>
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="first_name" name = "first_name" value = "{{ $user->first_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź imię')"  oninput="setCustomValidity('')" required/>
+                                    <label class="form-label" for="first_name">Imię</label>
+                                </div>
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="last_name" name = "last_name" value = "{{ $user->last_name }}" class="form-control form-control" oninvalid="this.setCustomValidity('Wprowadź nazwisko')"  oninput="setCustomValidity('')" required/>
+                                    <label class="form-label" for="last_name">Nazwisko</label>
                                 </div>
 
-                                <div class="col-md-4">
-                                    <div class="form-outline mb-3">
-                                        <input type="number" id="price" name = "price" value = "{{$service->price}}" class="form-control form-control" />
-                                        <label class="form-label" for="price">Cena</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input disabled type="text" placeholder="zł" id="price_zł" name = "price_zl"  class="form-control form-control" />
-                                </div>
-
-                                <div class="col-md-4">
-                                    <div class="form-outline mb-3">
-                                        <input type="number" id="time" name = "time" value = "{{$service->time}}" class="form-control form-control" />
-                                        <label class="form-label" for="price">Czas</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-2">
-                                    <input disabled type="text" placeholder="min" id="time_min" name = "time_min"  class="form-control form-control" />
+                                <div class="form-outline mb-3">
+                                    <input type="text" id="phone" maxlength="11" name="phone" onkeydown="phoneNumberFormat()" oninvalid="this.setCustomValidity('Nieprawidłowy format')" class="form-control" oninput="setCustomValidity('')" value = "{{ $user->phone }}" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" required>
+                                    <label class="form-label" for="phone">Nr Telefonu [000-000-000]</label>
                                 </div>
 
 
-                                <div class="d-flex flex-column align-items-center text-center">
+                                <select class="form-select" aria-label="select_permission" name = "permission_select" id="permission_select">
+                                    <option value="choose" disabled>Wybierz Role</option>
+                                    <option value="admin" @if($user->hasRole('admin')) selected @endif>Administrator</option>
+                                    <option value="employee" @if($user->hasRole('employee')) selected @endif>Pracownik</option>
+                                    <option value="client" @if($user->hasRole('client')) selected @endif>Klient</option>
+                                </select>
+
+                                <input type = "text" hidden name = "user_id" value = "{{$user->id}}">
+
+                                <div class="d-flex flex-column align-items-center text-center m-2">
                                     <button type="submit" class="btn btn-success btn-rounded">
                                         Potwierdź
                                     </button>

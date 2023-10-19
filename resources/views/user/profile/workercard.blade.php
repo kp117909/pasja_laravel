@@ -25,7 +25,7 @@
                                 <i class="fa fa-bars"></i>
                             </div>
                             <div class="card-header-headshot" id="worker-avatar">
-                                <img class="rounded-circle border border-3 card-header-headshot" id ="my_photo" src="{{asset('png/'.auth()->user()->worker->icon_photo)}}">
+                                <img class="rounded-circle border border-3 card-header-headshot" id ="my_photo" src="{{asset('png/'.$worker->icon_photo)}}">
                             </div>
                         </div>
                         <div class="card-content">
@@ -49,10 +49,10 @@
                         <div class="card-footer">
                             <div class="card-footer-stats">
                                 <div>
-                                    <p>Klienci:</p><i class="fa fa-users"></i><span> 241</span>
+                                    <p>Klienci:</p><i class="fa fa-users"></i><span> {{$eventsCount}}</span>
                                 </div>
                                 <div>
-                                    <p>Wykonane usługi:</p><i class="fa fa-coffee"></i><span> 350</span>
+                                    <p>Usługi:</p><i class="fa fa-scissors"></i><span> {{$servicesCount}}</span>
                                 </div>
                             </div>
                         </div>
@@ -60,6 +60,12 @@
                 </div>
                 <div class="col-sm-12 col-md-8">
                     <div class="review-block">
+                        @if(count($worker->review) == 0 )
+                            <div class="review-block-rate">
+                                <div class="review-block-title">Ten pracownik nie posiada żadnych opini</div>
+                                <div class="review-block-description">Zostaw opinie! HairLink</div>
+                            </div>
+                        @endif
                         @foreach($worker->review as $review)
                         <div class="row">
                             <div class="col-sm-3">

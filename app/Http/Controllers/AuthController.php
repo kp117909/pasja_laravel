@@ -72,13 +72,17 @@ class AuthController extends Controller
 
     public function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'login' => $data['login'],
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
             'phone' => $data['phone'],
             'password' => Hash::make($data['password'])
         ]);
+
+        $user->assignRole('client');
+
+        return $user;
     }
 
 

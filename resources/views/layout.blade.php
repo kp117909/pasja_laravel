@@ -7,7 +7,8 @@
 {{--    <link href = "{{url('css/app.css')}}" rel = "stylesheet"/>--}}
 
     @vite(['resources/css/app.css', 'resources/css/style.css', 'resources/js/app.js'])
-
+    <title>HairLink</title>
+    <link rel="icon" href="{{asset('png/logorounded.png')}}" type="image/x-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <!-- custom alerts -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -84,17 +85,14 @@
 
           <a href="{{ route('logout') }}" class="list-group-item list-group-item-action py-2 ripple">
           <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-3"></i>
-            </i>
             <span>Wyloguj</span>
           </a>
 
 
             <a href="{{ route('add.notify') }}" class="list-group-item list-group-item-action py-2 ripple">
-                <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-3"></i>
-                </i>
+
                 <span>Notifikacje DEV</span>
             </a>
-
 
         </div>
       </div>

@@ -61,5 +61,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class);
     }
 
+    public static function getAdminsAndEmployees()
+    {
+        return self::role(['admin', 'employee'])->get();
+    }
+
+
 
 }

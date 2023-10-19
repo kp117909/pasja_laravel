@@ -74,7 +74,7 @@
               selectable: true,
               editable: true,
               select: async function (start, end, allDay) {
-                  @if(auth()->user()->is_admin)
+                  @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                     showOptionsAdmin(start.startStr, start.endStr, start.start.getDay());
                   @else
                       resetSelects();
@@ -95,7 +95,7 @@
                   isLoadingComplete = true;
 
                   clearTimeout(loadingTimeout);
-                  @if(auth()->user()->is_admin)
+                  @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                     event.el.querySelector('.fc-title').textContent = eventPath.extendedProps.name_c + ' ' + eventPath.extendedProps.surname_c;
                   @else
                   if (eventPath.extendedProps.client_id === {{auth()->user()->id}}) {
@@ -124,7 +124,7 @@
               },
 
               eventResize: function (event) {
-                  @if(auth()->user()->is_admin)
+                  @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                   $.ajax({
                       url: "{{ route('calendar.update')}}",
                       type: "GET",
@@ -141,10 +141,10 @@
                               icon: "success",
                               showConfirmButton: false
                           })
-                          calendar.refetchEvents();
 
                           setTimeout(function() {
                               Swal.close();
+                              calendar.refetchEvents();
                           }, 2000);
 
                       },
@@ -164,7 +164,7 @@
                   @endif
               },
               eventDrop: function (event) {
-                  @if(auth()->user()->is_admin)
+                  @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                   var id = event.event.id;
                   var start_date = moment(event.event.start).format("YYYY-MM-DDTHH:mm:ss")
                   var end_date = moment(event.event.end).format("YYYY-MM-DDTHH:mm:ss")
@@ -180,9 +180,9 @@
                               icon: "success",
                               showConfirmButton: false
                           })
-                          calendar.refetchEvents();
                           setTimeout(function() {
                               Swal.close();
+                              calendar.refetchEvents();
                           }, 2000);
                       },
                       error: function (error) {
@@ -207,7 +207,7 @@
                       services_list = services_list + "<li class='list-group-item'>" + e.service_name + "</li>";
                   });
                   info.el.style.borderColor = 'black';
-                  @if(auth()->user()->is_admin)
+                  @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                       Swal.fire({
                           title: '</p>Klient: ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c + "<br>Godzina: " + info.event.start.getHours() + ":" + (info.event.start.getMinutes() < 10 ? '0' : '') + info.event.start.getMinutes() + "-" + info.event.end.getHours() + ":" + (info.event.end.getMinutes() < 10 ? '0' : '') + info.event.end.getMinutes(),
                           icon: 'info',
@@ -250,7 +250,7 @@
                                   title: 'Edytuj Wizytę Klienta: <br> ' + info.event.extendedProps.name_c + ' ' + info.event.extendedProps.surname_c,
                                   html:
                                       '<label for="input_worker">Zmień Pracownika</label>' +
-                                      ' <select id = "worker_id_edit" class="form-control form-control-sm">>' +
+                                      ' <select id = "worker_id_edit" class="form-control form-control-sm">' +
                                       @foreach($workers as $worker)
                                           '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
                                       @endforeach
@@ -306,9 +306,9 @@
                                                   icon: "success",
                                                   showConfirmButton: false,
                                               })
-                                              calendar.refetchEvents();
                                               setTimeout(function() {
                                                   Swal.close();
+                                                  calendar.refetchEvents();
                                               }, 2000);
                                           },
                                           error: function (error) {
@@ -352,9 +352,10 @@
                                               icon: "success",
                                               showConfirmButton: false
                                           })
-                                          calendar.refetchEvents();
+
                                           setTimeout(function() {
                                               Swal.close();
+                                              calendar.refetchEvents();
                                           }, 2000);
                                       }else{
                                           Swal.fire({
@@ -400,7 +401,7 @@
     <script>
 
         function addVisitCalendar(){
-            @if(auth()->user()->is_admin)
+            @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                 var selectedServices = [];
                 $("#select_services option:selected").each(function() {
                     var service = {
@@ -433,9 +434,9 @@
                                 showConfirmButton: false,
                             })
                             hideModal();
-                            calendar.refetchEvents();
                             setTimeout(function() {
                                 Swal.close();
+                                calendar.refetchEvents();
                             }, 2000);
                         }else if(response.type === "error"){
                             Swal.fire({
@@ -500,9 +501,9 @@
                             showConfirmButton: false,
                         })
                         hideModal();
-                        calendar.refetchEvents();
                         setTimeout(function() {
                             Swal.close();
+                            calendar.refetchEvents();
                         }, 2000);
                     }else if(response.type === "error"){
                         Swal.fire({
@@ -539,7 +540,7 @@
               <div id="modalBody" class="modal-body">
                   <form onsubmit="addVisitCalendar();return false">
                       @csrf
-                      @if(auth()->user()->is_admin)
+                      @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                           <label for="select_client">Wybierz Klienta z listy</label>
                           <select id ="select_client" data-max-options="1" name = "client" title='Wybierz Klienta z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Klienta')" multiple required>
                               @foreach ($clients as $client)
@@ -574,7 +575,7 @@
                       <div class="col-md-1 mb-4"></div>
                       <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              @if(auth()->user()->is_admin)
+                              @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                                   <input type="datetime-local" id="date_start" name="date_start" class="form-control" />
                               @else
                                 <input type="datetime-local" id="date_start" name="date_start" class="form-control" disabled/>
@@ -583,7 +584,7 @@
                       </div>
                       <div class="col-md-5 mb-4">
                           <div class="datetimepicker">
-                              @if(auth()->user()->is_admin)
+                              @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                                  <input type="datetime-local" id="date_end" name="date_end" class="form-control"/>
                               @else
                                  <input type="datetime-local" id="date_end" name="date_end" class="form-control" disabled/>
@@ -596,7 +597,7 @@
                       <div class="input-group-prepend">
                           <span class="input-group-text">Kwota Końcowa:</span>
                           </div>
-                      @if(auth()->user()->is_admin)
+                      @if(auth()->user()->hasRole("admin") || auth()->user()->hasRole("employee"))
                           <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena">
                       @else
                           <input type="number" value = "0" id = "overall_price" name = "overall_price" class="form-control" aria-label="Cena" disabled>
@@ -698,9 +699,11 @@
         function hideLoadingMessage() {
             Swal.close()
         }
+
         function hideModal(){
             $('#modalAddVisit').modal('hide');
         }
+
     </script>
 
 

@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Events;
 use App\Models\Services;
+use App\Models\ServicesEvents;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Workers;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\ServerBag;
 
 class WorkerController extends Controller
 {
@@ -38,7 +40,7 @@ class WorkerController extends Controller
         $employee->save();
 
         return response()->json(['message' => 'Godziny dyspozycyjności zostały zapisane.'], 200);
-    }
+     }
 
     public function update(Request $request)
     {
@@ -92,9 +94,52 @@ class WorkerController extends Controller
         ]);
     }
 
+    public function getWorkerList(Request $request){
+        $workers = User::getAdminsAndEmployees();
+;
+        return view('profile_worker_list',[
+            'workers' => $workers,
+        ]);
+    }
+
+    public function getUsersList(Request $request){
+        $users = User::all();
+
+        return view('profile_worker_list',[
+            'users' => $users
+        ]);
+    }
+
+
+    public function updateUser(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
+    {
+
+        $user = User::findOrFail($request->user_id);
+
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->phone = $request->phone;
+
+        $user->syncRoles([$request->permission_select]);
+
+        $user->save();
+
+        return Redirect('users.list');
+
+    }
+
     public function cardProfile(Request $request){
 
         $worker = Workers::findOrFail($request->id);
-        return view('user.profile.workercard', ['worker' => $worker]);
+
+        $workerEvents = Events::where('worker_id', $worker->id)->count();
+
+        $workerServices = ServicesEvents::where('id_worker', $worker->id)->count();
+
+        return view('user.profile.workercard', [
+            'worker' => $worker,
+            'eventsCount' => $workerEvents,
+            'servicesCount' => $workerServices,
+        ]);
     }
 }

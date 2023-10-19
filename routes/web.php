@@ -46,9 +46,24 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('rate.store', [ClientController::class, 'createRate'])->name('rate.store');
 
     // Worker Profile
-    Route::get('worker.profile', [WorkerController::class, 'profile'])->name('worker.profile');
 
-    Route::post('worker.update', [WorkerController::class, 'update'])->name('profile-worker.update');
+    Route::get('worker.profile', [WorkerController::class, 'profile'])
+        ->name('worker.profile')
+        ->middleware('checkRole:employee,admin');
+
+    Route::post('worker.update', [WorkerController::class, 'update'])
+        ->name('profile-worker.update')
+        ->middleware('checkRole:employee,admin');
+
+    Route::get('users.list', [WorkerController::class, 'getUsersList'])
+        ->name('users.list')
+        ->middleware('checkRole:admin');
+
+
+    Route::post('user.update', [WorkerController::class, 'updateUser'])
+        ->name('user.update')
+        ->middleware('checkRole:admin');
+
     // end Client Profile
 
     // Basic Pages
