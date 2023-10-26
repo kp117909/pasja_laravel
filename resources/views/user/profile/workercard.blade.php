@@ -103,7 +103,7 @@
 
     <script>
         $(document).ready(function() {
-            var imageUrl = {{asset('png/'.$worker->icon_photo)}}; // Miejsce na generowanie adresu URL obrazu
+            var imageUrl = {{asset('png/'.$worker->icon_photo)}};
 
             document.getElementById("worker-avatar").style.backgroundImage = "url('" + imageUrl + "')";
         });

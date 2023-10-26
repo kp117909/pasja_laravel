@@ -17,7 +17,33 @@ class HomeController extends Controller
     }
 
     public function index(){
-        return view('index');
+        $events = Events::where('client_id', auth()->user()->id)->get();
+        if ($events->isEmpty()) {
+            $closestEvent = null;
+        } else {
+            $currentTime = now();
+            $closestEvent = $events->where('start', '>', $currentTime)->sortBy('start')->first();
+            if($closestEvent){
+                $closestEvent->start = \Carbon\Carbon::parse($closestEvent->start);
+            }
+        }
+
+        $eventsWorker = Events::where('worker_id', auth()->user()->id)->get();
+        if ($eventsWorker->isEmpty()) {
+            $closestEventWorker = null;
+        } else {
+            $currentTime = now();
+            $closestEventWorker = $eventsWorker->where('start', '>', $currentTime)->sortBy('start')->first();
+            if($closestEventWorker){
+                $closestEventWorker->start = \Carbon\Carbon::parse($closestEventWorker->start);
+                $closestEventWorker->icon_photo = User::getIconPhoto($closestEventWorker->client_id);
+            }
+        }
+
+        return view('index', [
+            'event' => $closestEvent,
+            'eventWorker' => $closestEventWorker
+        ]);
     }
 
     public function info(){

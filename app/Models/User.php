@@ -66,6 +66,12 @@ class User extends Authenticatable
         return self::role(['admin', 'employee'])->get();
     }
 
+    public static function getIconPhoto($id)
+    {
+        $user = User::findOrfail($id);
+        return  $user->icon_photo;
+    }
+
 
 
 }

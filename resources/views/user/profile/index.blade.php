@@ -22,7 +22,7 @@
             <div class="p-3 py-5">
                 <div class="d-flex flex-column align-items-center text-center">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="text-center">Edytuj danes</h4>
+                        <h4 class="text-center">Edytuj dane</h4>
                     </div>
                 </div>
                 <div class="form-outline mb-3">
@@ -82,7 +82,6 @@
                                     />
                                     <div class="ms-3">
                                         <p class="fw-bold mb-1">{{$event->name_w}} {{$event->surname_w}}</p>
-                                        {{--                                    <p class="text-muted mb-0">alex.ray@gmail.com</p>--}}
                                     </div>
                                 </div>
                             </td>
@@ -90,7 +89,6 @@
                                 <button type="button" class="btn btn-primary btn-rounded" data-mdb-toggle="modal" data-mdb-target="#modal_{{$event->id}}">
                                     Pokaż
                                 </button>
-                                {{--                            <p class="text-muted mb-0">Finance</p>--}}
                             </td>
                             <td>
                             <span class="badge badge-primary rounded d-inline">

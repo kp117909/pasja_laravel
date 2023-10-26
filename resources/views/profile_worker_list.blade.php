@@ -71,6 +71,7 @@
                             <th>@sortablelink('') Id</th>
                             <th>Dane</th>
                             <th>Rola</th>
+                            <th>Status</th>
                             <th>Operacje</th>
                         </tr>
                         </thead>
@@ -106,16 +107,18 @@
                                     @endif
                                 </span>
                             </td>
+                            <td>
+                                @if($user->active)
+                                    Aktywne
+                                @else
+                                    Nieaktywne
+                                @endif
+                            </td>
                                 <td>
                                     <div class="row" style = "padding-left: 0px">
                                         <div class="col-md-4 mr-2">
                                             <button type="button" data-mdb-toggle="modal" data-mdb-target="#modalEdit_{{$user->id}}" id = "{{$user->id}}" class="btn btn-primary btn-rounded">
                                                 <i class="fa-solid fa-pen-to-square"></i>
-                                            </button>
-                                        </div>
-                                        <div class="col-md-4 ml-4">
-                                                <button type="button" name = "delete_button" id = "{{$user->id}}" class="btn btn-danger btn-rounded delete">
-                                                    <i class="fa-solid fa-trash"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -156,8 +159,19 @@
                                     <label class="form-label" for="phone">Nr Telefonu [000-000-000]</label>
                                 </div>
 
+                                <div class="form-check">
+                                    <input class="form-check-input" value = "1" @if($user->active) checked @endif type="radio" name="active_status" id="radio_active"/>
+                                    <label class="form-check-label" for="radio_active"> Konto Aktywne </label>
+                                </div>
 
-                                <select class="form-select" aria-label="select_permission" name = "permission_select" id="permission_select">
+
+                                <div class="form-check">
+                                    <input class="form-check-input" value = "0" type="radio" @if(!$user->active) checked @endif name="active_status" id="radio_active_nonactive"/>
+                                    <label class="form-check-label" for="radio_nonactive"> Konto Nieaktywne </label>
+                                </div>
+
+
+                                <select @if(auth()->user()->id == $user->id) disabled @endif class="form-select" aria-label="select_permission" name = "permission_select" id="permission_select">
                                     <option value="choose" disabled>Wybierz Role</option>
                                     <option value="admin" @if($user->hasRole('admin')) selected @endif>Administrator</option>
                                     <option value="employee" @if($user->hasRole('employee')) selected @endif>Pracownik</option>
@@ -167,8 +181,8 @@
                                 <input type = "text" hidden name = "user_id" value = "{{$user->id}}">
 
                                 <div class="d-flex flex-column align-items-center text-center m-2">
-                                    <button type="submit" class="btn btn-success btn-rounded">
-                                        Potwierdź
+                                    <button type="submit" class="btn btn-success btn-rounded" >
+                                            Potwierdź
                                     </button>
                                 </div>
                             </div>
@@ -215,6 +229,16 @@
                 })
             }});
     });
+
+    @if (session('decline_notify'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Zmiana typu konta niemożliwa',
+            text: 'Pracownik posiada umówione wizyty w kalendarzu!',
+            showConfirmButton: true
+        });
+    @endif
+
 </script>
 
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>

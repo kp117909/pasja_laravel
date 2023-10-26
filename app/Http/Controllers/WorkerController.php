@@ -24,13 +24,13 @@ class WorkerController extends Controller
 
         if (is_null($employee->accessibility)) {
             $employee->accessibility = [
-                '1' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '2' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '3' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '4' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '5' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '6' => ['start_time' => '8:00', 'end_time' => '21:00'],
-                '7' => ['start_time' => '8:00', 'end_time' => '21:00'],
+                '1' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '2' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '3' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '4' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '5' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '6' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                '7' => ['start_time' => '08:00', 'end_time' => '21:00'],
             ];
         }
 
@@ -114,16 +114,58 @@ class WorkerController extends Controller
     public function updateUser(Request $request): \Illuminate\Routing\Redirector|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\RedirectResponse
     {
 
+
         $user = User::findOrFail($request->user_id);
 
         $user->first_name = $request->first_name;
         $user->last_name = $request->last_name;
         $user->phone = $request->phone;
+        $user->active = $request->active_status;
 
+        if ($request->permission_select === "client"){
+            $workerEvents = Events::where('worker_id', $user->id)
+                ->where('start', '>', now())
+                ->count();
+
+            if ($workerEvents > 0) {
+                session()->flash('decline_notify');
+                return redirect()->back();
+            }
+        }
         $user->syncRoles([$request->permission_select]);
 
         $user->save();
 
+        $worker = Workers::firstOrNew(['id' => $user->id]);
+
+        if($request->permission_select === "client"){
+            if($worker->exists){
+                $worker->hired = 0;
+                $worker->save();
+            }
+        }else{
+            if (!$worker->exists) {
+                $worker->id = $user->id;
+                $worker->first_name = $user->first_name;
+                $worker->last_name = $user->last_name;
+                $worker->color = "#a2a2a2";
+                $worker->icon_photo = "no_photo.png";
+                $worker->accessibility = [
+                    '1' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '2' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '3' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '4' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '5' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '6' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                    '7' => ['start_time' => '08:00', 'end_time' => '21:00'],
+                ];
+            }else{
+                $worker->hired = 1;
+            }
+
+            $worker->save();
+
+        }
         return Redirect('users.list');
 
     }

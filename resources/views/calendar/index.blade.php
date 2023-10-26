@@ -13,13 +13,15 @@
             <div class = "d-flex flex-column align-items-center text-center">
                 <ul class="list-inline">
                 @foreach($workers as $worker)
-                    <li class = "list-inline-item">
-                        <div>
-                            <input class="filter form-check-input" id ="workers_filter" type="checkbox" value="{{$worker->last_name}}_{{$worker->id}}" checked>
-                            <a href="{{ route('worker.cardProfile', ['id' => $worker->id]) }}">{{ $worker->first_name }} {{ $worker->last_name }}</a>
-                            <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
-                        </div>
-                    </li>
+                    @if($worker->hired)
+                        <li class = "list-inline-item">
+                            <div>
+                                <input class="filter form-check-input" id ="workers_filter" type="checkbox" value="{{$worker->last_name}}_{{$worker->id}}" checked>
+                                <a href="{{ route('worker.cardProfile', ['id' => $worker->id]) }}">{{ $worker->first_name }} {{ $worker->last_name }}</a>
+                                <i class="fa-solid fa-palette" style="color: {{$worker->color}};"></i>
+                            </div>
+                        </li>
+                    @endif
                 @endforeach
                 </ul>
             </div>
@@ -36,6 +38,7 @@
           Swal.fire({
               title: "HairLink <i class='fa-solid fa-spinner fa-spin-pulse'></i>",
               text: "Ładowanie danych",
+              allowOutsideClick: () => false,
               showConfirmButton: false
           })
       }
@@ -139,6 +142,7 @@
                               title: "Czas wizyty edytowany pomyślnie!",
                               text: "HairLink",
                               icon: "success",
+                              allowOutsideClick: () => false,
                               showConfirmButton: false
                           })
 
@@ -178,6 +182,7 @@
                               title: "Czas wizyty edytowany pomyślnie!",
                               text: "HairLink",
                               icon: "success",
+                              allowOutsideClick: () => false,
                               showConfirmButton: false
                           })
                           setTimeout(function() {
@@ -232,6 +237,7 @@
                                           title: "Wizyta usunięta pomyślnie!",
                                           text: "HairLink",
                                           icon: "success",
+                                          allowOutsideClick: () => false,
                                           showConfirmButton: false
                                       })
                                       calendar.refetchEvents();
@@ -252,7 +258,9 @@
                                       '<label for="input_worker">Zmień Pracownika</label>' +
                                       ' <select id = "worker_id_edit" class="form-control form-control-sm">' +
                                       @foreach($workers as $worker)
-                                          '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
+                                          @if ($worker->hired)
+                                            '<option value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>' +
+                                          @endif
                                       @endforeach
                                           '</select>' +
                                       '<form class="container">' +
@@ -304,6 +312,7 @@
                                                   title: "Wizyta edytowana pomyślnie!",
                                                   text: "HairLink",
                                                   icon: "success",
+                                                  allowOutsideClick: () => false,
                                                   showConfirmButton: false,
                                               })
                                               setTimeout(function() {
@@ -350,6 +359,7 @@
                                               title: "Wizyta usunięta pomyślnie!",
                                               text: "HairLink",
                                               icon: "success",
+                                              allowOutsideClick: () => false,
                                               showConfirmButton: false
                                           })
 
@@ -431,6 +441,7 @@
                                 title: "Wizyta dodana pomyślnie!",
                                 text: "HairLink",
                                 icon: "success",
+                                allowOutsideClick: () => false,
                                 showConfirmButton: false,
                             })
                             hideModal();
@@ -498,6 +509,7 @@
                             title: "Wizyta dodana pomyślnie!",
                             text: "HairLink",
                             icon: "success",
+                            allowOutsideClick: () => false,
                             showConfirmButton: false,
                         })
                         hideModal();
@@ -551,7 +563,9 @@
                   <label for="select_worker">Wybierz Pracownika</label>
                   <select id ="select_worker" data-max-options="1" name = "worker" title='Wybierz Pracownika z listy...' class="form-control selectpicker" data-allow-clear="true" onchange="setCustomValidity('')" oninvalid="this.setCustomValidity('Wybierz Pracownika')" multiple required>
                       @foreach($workers as $worker)
-                          <option id = "worker"  value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
+                          @if ($worker->hired)
+                            <option id = "worker"  value = "{{ $worker->id }}"> {{ $worker->first_name }} {{ $worker -> last_name }}</option>
+                          @endif
                       @endforeach
                   </select>
                   <label for="select_services">Rodzaje Usług</label>
