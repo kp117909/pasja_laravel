@@ -118,47 +118,130 @@ function replaceAll(src,search,replace){
     return src.split(search).join(replace);
 }
 
+import Chart from 'chart.js/auto';
+import 'chartjs-plugin-zoom';
+
 var ctx = document.getElementById("myChart");
 
-var myChart = new Chart(ctx, {
-    type: "line",
-    data: {
-        labels: [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-        ],
-        datasets: [
-            {
-                label: 'PLN',
-                data: [15339, 21345, 18483, 24003, 23489, 24092, 12034],
-                lineTension: 0,
-                backgroundColor: "transparent",
-                borderColor: "#007bff",
-                borderWidth: 4,
-                pointBackgroundColor: "#007bff",
-            },
-        ],
-    },
-    options: {
-        scales: {
-            yAxes: [
-                {
-                    ticks: {
-                        beginAtZero: false,
+// Sprawdź, czy istnieje poprzedni wykres i usuń go
+var previousChart = Chart.getChart(ctx);
+if (previousChart) {
+    previousChart.destroy();
+}
+var xhr = new XMLHttpRequest();
+
+var currentPath = window.location.pathname;
+
+// Pobieranie id z path, zakładając, że path ma postać '/analytics/worker/{id}'
+var matches = currentPath.match(/\/analytics\/worker\/(\d+)/);
+
+// Sprawdzanie, czy matches zawiera id
+if (matches && matches.length > 1) {
+    xhr.open("GET", "/charts/getData/"+matches[1], true);
+} else {
+    xhr.open("GET", "/charts/getData/", true);
+}
+xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        var dataFromDatabase = JSON.parse(xhr.responseText);
+
+        // Przekształć dane do odpowiedniego formatu
+        var entries = [];
+
+        var currentDate = new Date();
+
+        // Iteruj przez dane z bazy danych
+        dataFromDatabase.forEach(function (entry) {
+            var startDate = new Date(entry.start);
+
+            // Dodaj tylko wpisy z przeszłości
+            if (startDate < currentDate) {
+                var monthYear = startDate.toLocaleString('default', { month: 'long', year: 'numeric' }); // Pobierz nazwę miesiąca i rok
+
+                // Sprawdź, czy już istnieje wpis dla tego samego miesiąca
+                var existingEntry = entries.find(function (existing) {
+                    return existing.monthYear === monthYear;
+                });
+
+                if (existingEntry) {
+                    // Jeśli istnieje, dodaj do istniejącego wpisu
+                    existingEntry.overallPrice += entry.overal_price;
+                } else {
+                    // Jeśli nie istnieje, utwórz nowy wpis
+                    entries.push({
+                        monthYear: monthYear,
+                        overallPrice: entry.overal_price,
+                    });
+                }
+            }
+        });
+
+        // Sortuj wpisy chronologicznie
+        entries.sort(function (a, b) {
+            var dateA = new Date(a.monthYear);
+            var dateB = new Date(b.monthYear);
+            return dateA - dateB;
+        });
+
+        var visibleEntries = entries.slice();
+
+        // Przygotuj etykiety i dane do wykresu
+        var months = visibleEntries.map(function (entry) {
+            return entry.monthYear;
+        });
+
+        var overallPrices = visibleEntries.map(function (entry) {
+            return entry.overallPrice;
+        });
+
+        // Stwórz wykres kolumnowy
+        var myChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: months,
+                datasets: [
+                    {
+                        label: 'PLN',
+                        data: overallPrices,
+                        backgroundColor: "gray",
                     },
+                ],
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            maxRotation: 0, // Obrót etykiet na osi X
+                            minRotation: 0,
+                        },
+                        maxTicksLimit: 3, // Maksymalna liczba widocznych etykiet
+                    }],
                 },
-            ],
-        },
-        legend: {
-            display: false,
-        },
-    },
-});
+                legend: {
+                    display: false,
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'x', // Umożliwia przewijanie tylko w osi X
+                },
+                zoom: {
+                    enabled: true,
+                    mode: 'x', // Umożliwia zoomowanie tylko w osi X
+                },
+            },
+        });
+    }
+};
+xhr.send();
+
+
+
+
 
 $('.selectpicker').selectpicker({
     style: 'btn btn-outline-dark',

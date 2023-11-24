@@ -78,7 +78,7 @@
                 <i class="fa-solid fa-user fa-fw me-3"></i><span>Twój profil</span>
             </a>
 
-        <a href="{{ route('home.info') }}" class="list-group-item list-group-item-action py-2 ripple">
+        <a href="{{ route('home.analytics') }}" class="list-group-item list-group-item-action py-2 ripple">
             <i class="fas fa-chart-line fa-fw me-3">
             </i>
             <span>Analityka</span>

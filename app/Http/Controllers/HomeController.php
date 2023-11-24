@@ -9,6 +9,7 @@ use App\Models\Workers;
 use App\Models\Services;
 use App\Models\ServicesEvents;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -46,8 +47,82 @@ class HomeController extends Controller
         ]);
     }
 
-    public function info(){
-        return view('info');
+    public function info() {
+
+        $totalClients = Events::where('end', '<', now())->count();
+        $totalEarnings = Events::where('end', '<', now())->sum('overal_price');
+
+        $currentMonth = now()->format('Y-m');
+        $currentMonthClients = Events::where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->where('end', '<', now())
+            ->count();
+
+        $currentMonthEarnings = Events::where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->where('end', '<', now())
+            ->sum('overal_price');
+
+
+        $allServicesWithStart = ServicesEvents::join('events', 'services_events.id_event', '=', 'events.id')
+            ->select('services_events.*', 'events.start')
+            ->where('events.start', '<', now())
+            ->get();
+
+
+        $currentServicesWithStart = ServicesEvents::join('events', 'services_events.id_event', '=', 'events.id')
+            ->select('services_events.*', 'events.start')
+            ->where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->get();
+
+        $totalServices = $allServicesWithStart->count();
+
+        $currentServices = $currentServicesWithStart->count();
+
+        $workers = Workers::all();
+
+        return view('info', compact('totalClients', 'totalEarnings', 'totalServices', 'currentMonthClients', 'currentMonthEarnings', 'currentServices', 'workers'));
+    }
+    public function workerAnalytics(Request $request){
+
+        $workerId = $request->id;
+
+        $totalClients = Events::where('end', '<', now())->where('worker_id','=',$workerId)->count();
+
+        $totalEarnings = Events::where('end', '<', now())->where('worker_id','=',$workerId)->sum('overal_price');
+
+        $currentMonth = now()->format('Y-m');
+        $currentMonthClients = Events::where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->where('end', '<', now())
+            ->where('worker_id','=',$workerId)
+            ->count();
+
+        $currentMonthEarnings = Events::where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->where('end', '<', now())
+            ->where('worker_id','=',$workerId)
+            ->sum('overal_price');
+
+
+        $allServicesWithStart = ServicesEvents::join('events', 'services_events.id_event', '=', 'events.id')
+            ->select('services_events.*', 'events.start')
+            ->where('events.start', '<', now())
+            ->where('worker_id','=',$workerId)
+            ->get();
+
+
+        $currentServicesWithStart = ServicesEvents::join('events', 'services_events.id_event', '=', 'events.id')
+            ->select('services_events.*', 'events.start')
+            ->where(DB::raw("DATE_FORMAT(start, '%Y-%m')"), '=', $currentMonth)
+            ->where('worker_id','=',$workerId)
+            ->get();
+
+        $totalServices = $allServicesWithStart->count();
+
+        $currentServices = $currentServicesWithStart->count();
+
+        $workers = Workers::all();
+
+        $currentWorker = Workers::findOrFail($workerId);
+
+        return view('info', compact('totalClients', 'totalEarnings', 'totalServices', 'currentMonthClients', 'currentMonthEarnings', 'currentServices', 'workers', 'currentWorker'));
     }
 //
 //    public function profile(){

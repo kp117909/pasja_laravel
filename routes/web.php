@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\WorkerController;
+use App\Models\Events;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -70,8 +71,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('index', [HomeController::class, 'index'])->name('home.index');
-
-    Route::get('info', [HomeController::class, 'info'])->name('home.info');
     //end Basic Pages
 
     // Services components
@@ -106,7 +105,19 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/calendar.events', [CalendarController::class, 'getEvents']);
     //end Calendar
 
+    // Analytics
+
+    Route::get('analytics', [HomeController::class, 'info'])->name('home.analytics');
+
+    Route::get('analytics/worker/{id}', [HomeController::class, 'workerAnalytics'])->name('worker.analytics');
+
+
+    Route::get('/charts/getData/{id?}', function ($id = null) {
+        $data = $id ? Events::where('worker_id', '=', $id)->get() : Events::all();
+        return response()->json($data);
     });
+
+});
 
 
 
