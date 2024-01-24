@@ -77,13 +77,13 @@
 
                 <i class="fa-solid fa-user fa-fw me-3"></i><span>Twój profil</span>
             </a>
-
-        <a href="{{ route('home.analytics') }}" class="list-group-item list-group-item-action py-2 ripple">
-            <i class="fas fa-chart-line fa-fw me-3">
-            </i>
-            <span>Analityka</span>
-        </a>
-
+            @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('employee'))
+                <a href="{{ route('home.analytics') }}" class="list-group-item list-group-item-action py-2 ripple">
+                    <i class="fas fa-chart-line fa-fw me-3">
+                    </i>
+                    <span>Analityka</span>
+                </a>
+            @endif
           <a href="{{ route('logout') }}" class="list-group-item list-group-item-action py-2 ripple">
           <i class="fa-solid fa-arrow-right-from-bracket fa-fw me-3"></i>
             <span>Wyloguj</span>

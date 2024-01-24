@@ -9,6 +9,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script src="https://kit.fontawesome.com/3133d360bd.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <title>HairLink</title>
+    <link rel="icon" href="{{asset('png/logorounded.png')}}" type="image/x-icon">
 </head>
 <body>
 <section class="vh-100" style="background-image: url('png/tlo_pasja.jpeg');

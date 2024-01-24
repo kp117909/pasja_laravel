@@ -100,10 +100,9 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('add.notify', [Controller::class, 'notifyAdd'])->name('add.notify');
 
-//    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
+    //    Route::post('calendar.status', [CalendarController::class, 'status'])->name('calendar.status');
 
     Route::get('/calendar.events', [CalendarController::class, 'getEvents']);
-    //end Calendar
 
     // Analytics
 
